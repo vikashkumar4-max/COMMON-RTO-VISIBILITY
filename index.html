@@ -3,361 +3,553 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PAN INDIA LIVE DASHBOARD</title>
+  <title>National Vehicle & Certificate Tracking Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-    body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-    
-    .kpi-card {
-      transition: all 0.2s ease-in-out;
-      cursor: pointer;
-    }
-    .kpi-card:hover {
-      transform: translateY(-2px);
-    }
-    .kpi-card.active-kpi {
-      outline: 3px solid #38bdf8;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
-    }
-
-    .top-bar-stripe {
-      height: 4px;
-      background: linear-gradient(90deg, #f97316 0%, #10b981 50%, #06b6d4 100%);
-    }
-
-    .table-container::-webkit-scrollbar { width: 6px; height: 6px; }
-    .table-container::-webkit-scrollbar-track { background: #f1f1f1; }
-    .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body { font-family: 'Roboto', sans-serif; }
+    .mono-font { font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 pb-10">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
 
-  <!-- TOP STRIPE -->
-  <div class="top-bar-stripe"></div>
+  <!-- GOVT BRANDING TOP BANNER -->
+  <div class="bg-slate-900 text-slate-300 text-[11px] px-6 py-1.5 flex justify-between items-center border-b border-slate-800">
+    <div class="flex items-center gap-3 font-medium">
+      <span><i class="fa-solid fa-shield-halved text-amber-500 mr-1"></i> Official Management Portal</span>
+      <span>|</span>
+      <span>Ministry Standard Interface</span>
+    </div>
+    <div id="liveTime" class="font-mono text-slate-400">--:--:--</div>
+  </div>
 
-  <!-- HEADER -->
-  <header class="max-w-[1500px] mx-auto px-4 pt-4 pb-2">
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 px-6 py-3 flex flex-wrap justify-between items-center gap-4">
+  <!-- MAIN HEADER -->
+  <header class="bg-white border-b border-slate-300 shadow-sm sticky top-0 z-40">
+    <div class="max-w-[1700px] mx-auto px-6 py-3 flex flex-wrap justify-between items-center gap-4">
       
       <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-amber-400 font-black text-xl shadow">
-          <i class="fa-solid fa-shield-halved"></i>
+        <div class="w-12 h-12 bg-indigo-900 text-white rounded-md flex items-center justify-center font-black text-2xl shadow">
+          <i class="fa-solid fa-building-columns"></i>
         </div>
-        <div class="flex items-center gap-3">
-          <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">PAN INDIA LIVE DASHBOARD</h1>
-          <span id="syncStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
-            <span class="w-2 h-2 mr-1.5 rounded-full bg-amber-500 animate-ping"></span>
-            Syncing Data...
-          </span>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-slate-900 uppercase">National Vehicle Management System</h1>
+          <p class="text-xs text-slate-500 font-semibold">Centralized Certificate & Device Tracking Portal</p>
         </div>
       </div>
 
+      <!-- PORTAL SWITCHERS / AUTH -->
       <div class="flex items-center gap-3">
-        <span class="bg-slate-100 text-slate-700 font-semibold px-4 py-1.5 rounded-lg text-xs border border-slate-200">
-          User: <strong class="text-slate-900">Administrator</strong>
-        </span>
-        <button onclick="location.reload()" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-1.5 rounded-lg text-xs transition shadow-sm uppercase">
-          LOGOUT
+        <div id="userInfoBadge" class="hidden text-right">
+          <p id="loggedInAdminEmail" class="text-xs font-bold text-indigo-900"></p>
+          <span class="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-black uppercase">Admin Authorized</span>
+        </div>
+
+        <button id="btnTeamView" onclick="switchView('TEAM')" class="px-4 py-2 bg-indigo-900 text-white text-xs font-bold rounded hover:bg-indigo-950 transition shadow-sm">
+          <i class="fa-solid fa-list-check mr-1.5"></i> Live Operations View
+        </button>
+
+        <button id="btnAdminPortal" onclick="openAdminAuthModal()" class="px-4 py-2 bg-amber-500 text-slate-950 text-xs font-bold rounded hover:bg-amber-600 transition shadow-sm">
+          <i class="fa-solid fa-user-shield mr-1.5"></i> Admin Login
+        </button>
+
+        <button id="btnLogout" onclick="logoutAdmin()" class="hidden px-3 py-2 bg-rose-600 text-white text-xs font-bold rounded hover:bg-rose-700 transition">
+          Logout
         </button>
       </div>
 
     </div>
   </header>
 
-  <main class="max-w-[1500px] mx-auto px-4 mt-3 space-y-4">
+  <!-- ADMIN AUTH MODAL -->
+  <div id="adminAuthModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm">
+    <div class="bg-white border border-slate-300 rounded-lg p-6 max-w-md w-full shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200">
+        <h3 class="text-sm font-bold uppercase text-slate-900"><i class="fa-solid fa-lock text-amber-600 mr-2"></i>Admin Authentication</h3>
+        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+      <div class="py-4">
+        <p class="text-xs text-slate-600 mb-3">Enter your authorized Admin Email ID to access executive metrics and charts.</p>
+        <input type="email" id="adminEmailInput" placeholder="Enter admin email address..." class="w-full bg-slate-50 border border-slate-300 text-xs font-bold text-slate-800 rounded p-3 focus:outline-none focus:border-indigo-900">
+        <p id="authErrorMsg" class="text-xs text-rose-600 font-bold mt-2 hidden"></p>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+        <button onclick="closeAdminModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded hover:bg-slate-300">Cancel</button>
+        <button onclick="verifyAdminAccess()" class="px-4 py-2 bg-indigo-900 text-white text-xs font-bold rounded hover:bg-indigo-950">Authenticate</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- KPI CARDS SECTION -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-[1700px] mx-auto px-6 mt-6">
+
+    <!-- LOADING SPINNER -->
+    <div id="loadingBox" class="bg-white p-12 rounded border border-slate-300 shadow-sm text-center">
+      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-900"></i>
+      <p class="text-xs font-bold text-slate-600 mt-3 uppercase tracking-wider">Fetching live data feed...</p>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- SECTION 1: LIVE OPERATIONS VIEW (TEAM) -->
+    <!-- ===================================== -->
+    <div id="teamViewSection" class="space-y-4 hidden">
       
-      <!-- TOTAL CASES -->
-      <div id="card-total" onclick="selectKpiFilter('TOTAL')" class="kpi-card active-kpi bg-[#0f172a] text-white p-5 rounded-xl border border-slate-800 shadow">
-        <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-300">TOTAL CASES</p>
-        <p id="kpiTotal" class="text-4xl font-black mt-2">0</p>
+      <!-- CONTROLS & FILTERS -->
+      <div class="bg-white p-4 rounded border border-slate-300 shadow-sm flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-3 items-center flex-1">
+          
+          <div class="relative min-w-[260px]">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+            <input type="text" id="searchInput" oninput="debounceFilter()" placeholder="Search Vehicle, Owner, Device..." class="w-full bg-slate-50 border border-slate-300 text-xs font-bold pl-9 pr-3 py-2.5 rounded focus:outline-none focus:border-indigo-900">
+          </div>
+
+          <select id="stateFilter" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-xs font-bold py-2.5 px-3 rounded focus:outline-none focus:border-indigo-900">
+            <option value="">All States / Projects</option>
+          </select>
+
+          <select id="remarkFilter" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-xs font-bold py-2.5 px-3 rounded focus:outline-none focus:border-indigo-900">
+            <option value="">All Status / Remarks</option>
+          </select>
+
+          <input type="date" id="dateFilter" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-xs font-bold py-2 px-3 rounded focus:outline-none focus:border-indigo-900">
+
+          <button onclick="resetFilters()" class="px-3 py-2.5 bg-slate-200 text-slate-700 text-xs font-bold rounded hover:bg-slate-300">
+            Reset
+          </button>
+        </div>
+
+        <div class="text-xs font-bold text-slate-600">
+          Total Records: <span id="recordCount" class="text-indigo-900 font-black">0</span>
+        </div>
       </div>
 
-      <!-- CERTIFICATE ISSUED -->
-      <div id="card-issued" onclick="selectKpiFilter('ISSUED')" class="kpi-card bg-[#064e3b] text-white p-5 rounded-xl border border-emerald-900 shadow">
-        <p class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-200">CERTIFICATE ISSUED</p>
-        <p id="kpiIssued" class="text-4xl font-black mt-2">0</p>
-      </div>
-
-      <!-- PENDING CASES -->
-      <div id="card-pending" onclick="selectKpiFilter('PENDING')" class="kpi-card bg-[#451a03] text-white p-5 rounded-xl border border-amber-900 shadow">
-        <p class="text-[11px] font-extrabold uppercase tracking-wider text-amber-200">PENDING CASES</p>
-        <p id="kpiPending" class="text-4xl font-black mt-2">0</p>
-      </div>
-
-      <!-- NEED ACTION / ALERT -->
-      <div id="card-action" onclick="selectKpiFilter('ACTION')" class="kpi-card bg-[#4c0519] text-white p-5 rounded-xl border border-rose-950 shadow">
-        <p class="text-[11px] font-extrabold uppercase tracking-wider text-rose-200">NEED ACTION / ALERT</p>
-        <p id="kpiAction" class="text-4xl font-black mt-2">0</p>
+      <!-- GOVERNMENT PORTAL STYLE CLEAN TABLE -->
+      <div class="bg-white rounded border border-slate-300 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-white text-[11px] font-bold uppercase tracking-wider border-b border-slate-700">
+                <th class="px-4 py-3 text-center w-12 border-r border-slate-700">#</th>
+                <th class="px-4 py-3 border-r border-slate-700">Vehicle Registration</th>
+                <th class="px-4 py-3 border-r border-slate-700">Device Name</th>
+                <th class="px-4 py-3 border-r border-slate-700">Owner / Operator</th>
+                <th class="px-4 py-3 border-r border-slate-700">State / Project</th>
+                <th class="px-4 py-3 border-r border-slate-700">Order Date</th>
+                <th class="px-4 py-3">Status / Remark</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-slate-200 text-xs">
+              <!-- Rows inserted dynamically -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
 
-    <!-- FILTER & SEARCH PANEL -->
-    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-        
-        <!-- FILTER BY STATE -->
-        <div class="md:col-span-3">
-          <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">FILTER BY STATE</label>
-          <select id="stateFilter" onchange="applyFilters()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
-            <option value="ALL">All States</option>
-          </select>
+    <!-- ===================================== -->
+    <!-- SECTION 2: ADMIN METRICS DASHBOARD    -->
+    <!-- ===================================== -->
+    <div id="adminViewSection" class="space-y-6 hidden">
+      
+      <!-- TIMEFRAME SELECTOR -->
+      <div class="bg-white p-4 rounded border border-slate-300 shadow-sm flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 uppercase tracking-tight">Executive Performance Metrics</h2>
+          <p class="text-xs text-slate-500">Real-time status conversion & period analysis</p>
         </div>
 
-        <!-- FILTER BY STATUS -->
-        <div class="md:col-span-3">
-          <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">FILTER BY STATUS</label>
-          <select id="remarkFilter" onchange="applyFilters()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
-            <option value="ALL">All Status / Remarks</option>
-          </select>
+        <div class="bg-slate-100 p-1 rounded border border-slate-300 flex">
+          <button onclick="setTimeframe('DAY')" id="btn-DAY" class="tf-btn px-4 py-1.5 rounded text-xs font-bold">Today</button>
+          <button onclick="setTimeframe('WEEK')" id="btn-WEEK" class="tf-btn px-4 py-1.5 rounded text-xs font-bold">This Week</button>
+          <button onclick="setTimeframe('MONTH')" id="btn-MONTH" class="tf-btn px-4 py-1.5 rounded text-xs font-bold bg-indigo-900 text-white shadow-sm">This Month</button>
+          <button onclick="setTimeframe('YEAR')" id="btn-YEAR" class="tf-btn px-4 py-1.5 rounded text-xs font-bold">This Year</button>
         </div>
-
-        <!-- QUICK SEARCH (VEHICLE & OWNER NAME) -->
-        <div class="md:col-span-3">
-          <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">QUICK SEARCH</label>
-          <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search Vehicle Number or Owner Name..." class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
-        </div>
-
-        <!-- DATE & TODAY FILTER -->
-        <div class="md:col-span-3">
-          <div class="flex justify-between items-center mb-1">
-            <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">DATE FILTER</label>
-            <button onclick="setTodayDate()" class="text-[10px] font-black text-amber-600 hover:text-amber-800 uppercase">TODAY</button>
-          </div>
-          <div class="flex gap-2">
-            <input type="date" id="dateFilter" onchange="applyFilters()" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
-            <button onclick="clearDate()" class="px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg border border-slate-300 transition">Clear</button>
-          </div>
-        </div>
-
       </div>
-    </div>
 
-    <!-- MAIN DATA TABLE -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="table-container overflow-x-auto max-h-[620px]">
-        <table class="w-full text-left border-collapse">
-          <thead class="bg-[#0f172a] text-white text-[11px] font-extrabold uppercase tracking-wider sticky top-0 z-10">
-            <tr>
-              <th class="px-4 py-3.5 border-b border-slate-800">SR. NO.</th>
-              <th class="px-4 py-3.5 border-b border-slate-800">VEHICLE NUMBER</th>
-              <th class="px-4 py-3.5 border-b border-slate-800">REMARK / STATUS</th>
-              <th class="px-4 py-3.5 border-b border-slate-800">DATE</th>
-              <th class="px-4 py-3.5 border-b border-slate-800">OWNER NAME</th>
-              <th class="px-4 py-3.5 border-b border-slate-800">MOBILE NUMBER</th>
-              <th class="px-4 py-3.5 border-b border-slate-800">TIMESTAMP</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody" class="divide-y divide-slate-200 text-xs font-semibold text-slate-800">
-            <!-- Data Rows Render Here -->
-          </tbody>
-        </table>
+      <!-- METRIC CARDS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded border border-slate-300 shadow-sm border-l-4 border-l-indigo-900">
+          <p class="text-[11px] font-bold text-slate-500 uppercase">Total Received</p>
+          <p id="mTotal" class="text-3xl font-black text-slate-900 mt-2">0</p>
+          <p class="text-[11px] text-slate-400 mt-1">Cases in selected timeframe</p>
+        </div>
+
+        <div class="bg-white p-5 rounded border border-slate-300 shadow-sm border-l-4 border-l-emerald-600">
+          <p class="text-[11px] font-bold text-slate-500 uppercase">Certificate Issued</p>
+          <p id="mIssued" class="text-3xl font-black text-emerald-600 mt-2">0</p>
+          <p id="mIssuedRate" class="text-[11px] text-emerald-700 font-bold mt-1">0% Conversion</p>
+        </div>
+
+        <div class="bg-white p-5 rounded border border-slate-300 shadow-sm border-l-4 border-l-amber-500">
+          <p class="text-[11px] font-bold text-slate-500 uppercase">Pending Processing</p>
+          <p id="mPending" class="text-3xl font-black text-amber-600 mt-2">0</p>
+          <p class="text-[11px] text-slate-400 mt-1">Under operational review</p>
+        </div>
+
+        <div class="bg-white p-5 rounded border border-slate-300 shadow-sm border-l-4 border-l-rose-600">
+          <p class="text-[11px] font-bold text-slate-500 uppercase">Action Required</p>
+          <p id="mAction" class="text-3xl font-black text-rose-600 mt-2">0</p>
+          <p class="text-[11px] text-rose-600 font-bold mt-1">Immediate intervention needed</p>
+        </div>
       </div>
+
+      <!-- CHARTS MATRIX -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white p-5 rounded border border-slate-300 shadow-sm">
+          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Volume Trend Breakdown</h3>
+          <div class="h-[280px]">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded border border-slate-300 shadow-sm">
+          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Status Ratio Distribution</h3>
+          <div class="h-[280px] flex items-center justify-center">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </main>
 
   <script>
-    // ⚠️ YAHAN APNA APPS SCRIPT WEB APP URL PASTE KAREIN
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw59kPHIVUQ9hc0B6Fh0qFBGAQsQLLUWXsnYS91brq8XHj10rv6tA4CaiK1MNkzWHJr/exec";
+    // ⚠️ PASTE YOUR APPS SCRIPT WEB APP URL HERE
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6oMKfOiARe_FDRGwq4AmUuUEHM31j3zukQwg6gL4BhG4vO3VDlDQCOyJxJA67ny-u/exec";
 
     const NEED_ACTION_CONDITIONS = [
       "top-up done", "top-up pending", "check not clear", 
       "only activation pending", "tagging pending", "tagging done", "inventory"
     ];
 
-    let fullDataset = [];
-    let selectedKpi = "TOTAL";
+    let fullRows = [];
+    let filteredRows = [];
+    let currentTimeframe = "MONTH";
+    let trendChartInstance = null;
+    let statusChartInstance = null;
+    let currentAdminEmail = "";
+    let debounceTimer = null;
 
     window.onload = function() {
-      fetchData(true);
-      // SILENT BACKGROUND FETCH EVERY 10 SECONDS
-      setInterval(() => { fetchData(false); }, 10000);
+      updateClock();
+      setInterval(updateClock, 1000);
+      
+      const savedEmail = localStorage.getItem("admin_portal_email");
+      if (savedEmail) {
+        currentAdminEmail = savedEmail;
+      }
+      
+      loadData();
     };
 
-    async function fetchData(isInitial = false) {
-      const syncStatus = document.getElementById("syncStatus");
-      if (isInitial && syncStatus) syncStatus.style.opacity = "1";
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("liveTime").innerText = now.toLocaleTimeString('en-IN', { hour12: false });
+    }
 
+    async function loadData() {
       try {
-        const res = await fetch(APPS_SCRIPT_URL);
-        const data = await res.json();
-        
-        fullDataset = data.rows || [];
-
-        populateSelect("stateFilter", data.states || [], "All States");
-        populateSelect("remarkFilter", data.remarks || [], "All Status / Remarks");
-
-        applyFilters();
-
-        if (syncStatus) {
-          syncStatus.innerHTML = `<span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-500"></span>Live Updated`;
-          syncStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200";
+        let fetchUrl = APPS_SCRIPT_URL;
+        if (currentAdminEmail) {
+          fetchUrl += `?email=${encodeURIComponent(currentAdminEmail)}`;
         }
 
+        const res = await fetch(fetchUrl);
+        const data = await res.json();
+
+        fullRows = data.rows || [];
+
+        // Populate Filters
+        populateDropdown("stateFilter", data.states || []);
+        populateDropdown("remarkFilter", data.remarks || []);
+
+        document.getElementById("loadingBox").classList.add("hidden");
+
+        if (data.isAdmin === true) {
+          setupAdminHeader(currentAdminEmail);
+        }
+
+        switchView("TEAM");
       } catch (err) {
-        console.error("Silent Fetch Error:", err);
+        console.error("Data Load Error:", err);
+        document.getElementById("loadingBox").innerHTML = `
+          <p class="text-xs font-bold text-rose-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Data loading failed. Check Apps Script URL or permissions.</p>
+        `;
       }
     }
 
-    function populateSelect(id, items, defaultText) {
+    function populateDropdown(id, list) {
       const select = document.getElementById(id);
-      const currentVal = select.value;
-      
-      select.innerHTML = `<option value="ALL">${defaultText}</option>`;
-      items.forEach(item => {
+      list.forEach(item => {
         if (!item) return;
         const opt = document.createElement("option");
         opt.value = item;
         opt.innerText = item;
         select.appendChild(opt);
       });
-      select.value = currentVal || "ALL";
     }
 
-    function selectKpiFilter(type) {
-      selectedKpi = type;
-      
-      document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active-kpi'));
-      
-      if (type === 'TOTAL') document.getElementById('card-total').classList.add('active-kpi');
-      if (type === 'ISSUED') document.getElementById('card-issued').classList.add('active-kpi');
-      if (type === 'PENDING') document.getElementById('card-pending').classList.add('active-kpi');
-      if (type === 'ACTION') document.getElementById('card-action').classList.add('active-kpi');
+    function switchView(view) {
+      const teamSec = document.getElementById("teamViewSection");
+      const adminSec = document.getElementById("adminViewSection");
+      const btnTeam = document.getElementById("btnTeamView");
 
-      applyFilters();
-    }
-
-    function applyFilters() {
-      const stateVal = document.getElementById("stateFilter").value;
-      const remarkVal = document.getElementById("remarkFilter").value;
-      const dateVal = document.getElementById("dateFilter").value;
-      const searchVal = document.getElementById("searchInput").value.toLowerCase().trim().replace(/\s+/g, '');
-
-      // Filter Data
-      let filtered = fullDataset.filter(item => {
-        const matchesState = (stateVal === "ALL" || item.state === stateVal);
-        const matchesRemark = (remarkVal === "ALL" || item.remark === remarkVal);
-        
-        // Flexible Date Matching
-        let matchesDate = true;
-        if (dateVal) {
-          matchesDate = item.date && item.date.includes(dateVal);
-        }
-        
-        // Search Vehicle Number or Owner Name
-        const vehClean = (item.vehicle || "").toLowerCase().replace(/\s+/g, '');
-        const ownClean = (item.owner || "").toLowerCase().replace(/\s+/g, '');
-        const matchesSearch = (!searchVal || vehClean.includes(searchVal) || ownClean.includes(searchVal));
-
-        return matchesState && matchesRemark && matchesDate && matchesSearch;
-      });
-
-      // Update Cards Count
-      updateKpiCounters(filtered);
-
-      // Apply Card Filter
-      if (selectedKpi !== "TOTAL") {
-        filtered = filtered.filter(item => {
-          const remLower = (item.remark || "").toLowerCase().trim();
-          const isAction = NEED_ACTION_CONDITIONS.some(cond => remLower.includes(cond));
-          const isIssued = remLower.includes("issued") || remLower.includes("approved") || remLower.includes("passed") || remLower.includes("completed");
-
-          if (selectedKpi === "ACTION") return isAction;
-          if (selectedKpi === "ISSUED") return !isAction && isIssued;
-          if (selectedKpi === "PENDING") return !isAction && !isIssued;
-          return true;
-        });
+      if (view === "TEAM") {
+        adminSec.classList.add("hidden");
+        teamSec.classList.remove("hidden");
+        btnTeam.classList.add("ring-2", "ring-indigo-900");
+        applyFilters();
+      } else if (view === "ADMIN") {
+        teamSec.classList.add("hidden");
+        adminSec.classList.remove("hidden");
+        btnTeam.classList.remove("ring-2", "ring-indigo-900");
+        updateAdminDashboard();
       }
-
-      renderTable(filtered);
     }
 
-    function updateKpiCounters(data) {
-      let total = data.length;
-      let issued = 0;
-      let pending = 0;
-      let actionNeeded = 0;
-
-      data.forEach(row => {
-        const rem = (row.remark || "").toLowerCase().trim();
-        const isAction = NEED_ACTION_CONDITIONS.some(cond => rem.includes(cond));
-        const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
-
-        if (isAction) {
-          actionNeeded++;
-        } else if (isIssued) {
-          issued++;
-        } else {
-          pending++;
-        }
-      });
-
-      document.getElementById("kpiTotal").innerText = total;
-      document.getElementById("kpiIssued").innerText = issued;
-      document.getElementById("kpiPending").innerText = pending;
-      document.getElementById("kpiAction").innerText = actionNeeded;
+    function openAdminAuthModal() {
+      if (currentAdminEmail) {
+        switchView("ADMIN");
+        return;
+      }
+      document.getElementById("adminAuthModal").classList.remove("hidden");
     }
 
-    function renderTable(data) {
-      const tbody = document.getElementById("tableBody");
-      tbody.innerHTML = "";
+    function closeAdminModal() {
+      document.getElementById("adminAuthModal").classList.add("hidden");
+      document.getElementById("authErrorMsg").classList.add("hidden");
+    }
 
-      if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400 font-bold">No records found matching criteria</td></tr>`;
+    async function verifyAdminAccess() {
+      const email = document.getElementById("adminEmailInput").value.trim().toLowerCase();
+      const errBox = document.getElementById("authErrorMsg");
+      errBox.classList.add("hidden");
+
+      if (!email || !email.includes("@")) {
+        errBox.innerText = "Enter a valid email address.";
+        errBox.classList.remove("hidden");
         return;
       }
 
-      const fragment = document.createDocumentFragment();
-      data.forEach((row, idx) => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
+      try {
+        const res = await fetch(`${APPS_SCRIPT_URL}?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
 
-        let statusClass = "bg-amber-100 text-amber-900 border-amber-300";
-        const remLower = (row.remark || "").toLowerCase();
+        if (data.isAdmin === true) {
+          currentAdminEmail = email;
+          localStorage.setItem("admin_portal_email", email);
+          setupAdminHeader(email);
+          closeAdminModal();
+          switchView("ADMIN");
+        } else {
+          errBox.innerText = "⛔ Access Denied: Email not registered as ADMIN in Sheet!";
+          errBox.classList.remove("hidden");
+        }
+      } catch (err) {
+        errBox.innerText = "Authentication error. Try again.";
+        errBox.classList.remove("hidden");
+      }
+    }
+
+    function setupAdminHeader(email) {
+      document.getElementById("userInfoBadge").classList.remove("hidden");
+      document.getElementById("loggedInAdminEmail").innerText = email;
+      document.getElementById("btnAdminPortal").innerText = "Admin Metrics Portal";
+      document.getElementById("btnLogout").classList.remove("hidden");
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem("admin_portal_email");
+      currentAdminEmail = "";
+      location.reload();
+    }
+
+    // ================= TEAM TABLE LOGIC =================
+    function debounceFilter() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(applyFilters, 200);
+    }
+
+    function applyFilters() {
+      const q = document.getElementById("searchInput").value.toLowerCase().trim();
+      const state = document.getElementById("stateFilter").value;
+      const remark = document.getElementById("remarkFilter").value;
+      const date = document.getElementById("dateFilter").value;
+
+      filteredRows = fullRows.filter(r => {
+        if (q) {
+          const matchVeh = (r.vehicle || "").toLowerCase().includes(q);
+          const matchOwn = (r.owner || "").toLowerCase().includes(q);
+          const matchDev = (r.deviceName || "").toLowerCase().includes(q);
+          if (!matchVeh && !matchOwn && !matchDev) return false;
+        }
+        if (state && r.state !== state) return false;
+        if (remark && r.remark !== remark) return false;
+        if (date && r.date !== date) return false;
+        return true;
+      });
+
+      renderTable(filteredRows);
+    }
+
+    function renderTable(rows) {
+      const tbody = document.getElementById("tableBody");
+      document.getElementById("recordCount").innerText = rows.length;
+
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 font-medium">No matching vehicle records found.</td></tr>`;
+        return;
+      }
+
+      let html = "";
+      rows.forEach((r, idx) => {
+        const bgClass = idx % 2 === 0 ? "bg-white" : "bg-slate-50";
         
-        if (NEED_ACTION_CONDITIONS.some(c => remLower.includes(c))) {
-          statusClass = "bg-rose-100 text-rose-900 border-rose-300";
-        } else if (remLower.includes("issued") || remLower.includes("approved") || remLower.includes("passed")) {
-          statusClass = "bg-emerald-100 text-emerald-900 border-emerald-300";
+        let statusBadge = "bg-slate-200 text-slate-800 border-slate-300";
+        const remLower = (r.remark || "").toLowerCase();
+        if (remLower.includes("issued") || remLower.includes("passed") || remLower.includes("completed")) {
+          statusBadge = "bg-emerald-100 text-emerald-800 border-emerald-300";
+        } else if (NEED_ACTION_CONDITIONS.some(c => remLower.includes(c))) {
+          statusBadge = "bg-rose-100 text-rose-800 border-rose-300";
+        } else if (remLower.includes("pending")) {
+          statusBadge = "bg-amber-100 text-amber-800 border-amber-300";
         }
 
-        tr.innerHTML = `
-          <td class="px-4 py-3 font-bold text-slate-500">${idx + 1}</td>
-          <td class="px-4 py-3 font-black text-slate-900">${row.vehicle || '-'}</td>
-          <td class="px-4 py-3">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold border ${statusClass}">
-              ${row.remark || '-'}
-            </span>
-          </td>
-          <td class="px-4 py-3 font-bold text-slate-700">${row.date || '-'}</td>
-          <td class="px-4 py-3 font-medium text-slate-800">${row.owner || '-'}</td>
-          <td class="px-4 py-3 font-mono text-slate-600">${row.mobile || '-'}</td>
-          <td class="px-4 py-3 font-mono text-slate-500 text-[11px]">${row.timestamp || '-'}</td>
+        html += `
+          <tr class="${bgClass} hover:bg-indigo-50/50 transition border-b border-slate-200">
+            <td class="px-4 py-2.5 text-center font-mono text-slate-500 border-r border-slate-200">${idx + 1}</td>
+            <td class="px-4 py-2.5 mono-font font-medium text-slate-900 border-r border-slate-200 tracking-wider">${r.vehicle || '-'}</td>
+            <td class="px-4 py-2.5 font-medium text-slate-700 border-r border-slate-200">${r.deviceName || '-'}</td>
+            <td class="px-4 py-2.5 font-medium text-slate-800 border-r border-slate-200">${r.owner || '-'}</td>
+            <td class="px-4 py-2.5 font-semibold text-slate-600 border-r border-slate-200">${r.state || 'General'}</td>
+            <td class="px-4 py-2.5 font-mono text-slate-600 border-r border-slate-200">${r.date || '-'}</td>
+            <td class="px-4 py-2.5">
+              <span class="inline-block px-2.5 py-0.5 rounded text-[11px] font-bold border ${statusBadge}">${r.remark}</span>
+            </td>
+          </tr>
         `;
-        fragment.appendChild(tr);
       });
-      tbody.appendChild(fragment);
+
+      tbody.innerHTML = html;
     }
 
-    // FIXED LOCAL TIMEZONE TODAY FUNCTION
-    function setTodayDate() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      document.getElementById("dateFilter").value = `${year}-${month}-${day}`;
-      applyFilters();
-    }
-
-    function clearDate() {
+    function resetFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("stateFilter").value = "";
+      document.getElementById("remarkFilter").value = "";
       document.getElementById("dateFilter").value = "";
       applyFilters();
+    }
+
+    // ================= ADMIN DASHBOARD LOGIC =================
+    function setTimeframe(tf) {
+      currentTimeframe = tf;
+      document.querySelectorAll('.tf-btn').forEach(b => {
+        b.classList.remove('bg-indigo-900', 'text-white', 'shadow-sm');
+        b.classList.add('text-slate-700');
+      });
+      const activeBtn = document.getElementById(`btn-${tf}`);
+      activeBtn.classList.add('bg-indigo-900', 'text-white', 'shadow-sm');
+      updateAdminDashboard();
+    }
+
+    function updateAdminDashboard() {
+      const now = new Date();
+      
+      const filtered = fullRows.filter(row => {
+        if (!row.date) return false;
+        const rowDate = new Date(row.date);
+        if (isNaN(rowDate)) return false;
+
+        if (currentTimeframe === "DAY") {
+          return rowDate.toDateString() === now.toDateString();
+        } else if (currentTimeframe === "WEEK") {
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(now.getDate() - 7);
+          return rowDate >= oneWeekAgo && rowDate <= now;
+        } else if (currentTimeframe === "MONTH") {
+          return rowDate.getMonth() === now.getMonth() && rowDate.getFullYear() === now.getFullYear();
+        } else if (currentTimeframe === "YEAR") {
+          return rowDate.getFullYear() === now.getFullYear();
+        }
+        return true;
+      });
+
+      let total = filtered.length;
+      let issued = 0, pending = 0, action = 0;
+
+      filtered.forEach(r => {
+        const rem = (r.remark || "").toLowerCase().trim();
+        const isAction = NEED_ACTION_CONDITIONS.some(c => rem.includes(c));
+        const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
+
+        if (isAction) action++;
+        else if (isIssued) issued++;
+        else pending++;
+      });
+
+      document.getElementById("mTotal").innerText = total;
+      document.getElementById("mIssued").innerText = issued;
+      document.getElementById("mPending").innerText = pending;
+      document.getElementById("mAction").innerText = action;
+
+      const rate = total > 0 ? ((issued / total) * 100).toFixed(1) : 0;
+      document.getElementById("mIssuedRate").innerText = `${rate}% Conversion Rate`;
+
+      renderCharts(filtered, issued, pending, action);
+    }
+
+    function renderCharts(data, issued, pending, action) {
+      if (statusChartInstance) statusChartInstance.destroy();
+      const ctxPie = document.getElementById("statusChart").getContext("2d");
+      statusChartInstance = new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+          labels: ['Issued', 'Pending', 'Action Required'],
+          datasets: [{
+            data: [issued, pending, action],
+            backgroundColor: ['#059669', '#d97706', '#dc2626'],
+            borderWidth: 0
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      const grouped = {};
+      data.forEach(r => {
+        const key = r.date || 'Unknown';
+        grouped[key] = (grouped[key] || 0) + 1;
+      });
+
+      const labels = Object.keys(grouped).sort().slice(-10);
+      const counts = labels.map(l => grouped[l]);
+
+      if (trendChartInstance) trendChartInstance.destroy();
+      const ctxBar = document.getElementById("trendChart").getContext("2d");
+      trendChartInstance = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Cases',
+            data: counts,
+            backgroundColor: '#1e1b4b',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#e2e8f0' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
     }
   </script>
 </body>
