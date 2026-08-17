@@ -18,9 +18,8 @@
       transform: translateY(-2px);
     }
     .kpi-card.active-kpi {
-      ring: 4px;
-      outline: 2px solid #ffffff;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      outline: 3px solid #38bdf8;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
     }
 
     .top-bar-stripe {
@@ -57,7 +56,7 @@
 
       <div class="flex items-center gap-3">
         <span class="bg-slate-100 text-slate-700 font-semibold px-4 py-1.5 rounded-lg text-xs border border-slate-200">
-          User: <strong class="text-slate-900">MRATYUNJAY</strong>
+          User: <strong class="text-slate-900">Administrator</strong>
         </span>
         <button onclick="location.reload()" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-1.5 rounded-lg text-xs transition shadow-sm uppercase">
           LOGOUT
@@ -69,11 +68,11 @@
 
   <main class="max-w-[1500px] mx-auto px-4 mt-3 space-y-4">
 
-    <!-- KPI CARDS SECTION (EXACT COLOR MATCH FROM IMAGE) -->
+    <!-- KPI CARDS SECTION -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       
       <!-- TOTAL CASES -->
-      <div id="card-total" onclick="selectKpiFilter('TOTAL')" class="kpi-card bg-[#0f172a] text-white p-5 rounded-xl border border-slate-800 shadow">
+      <div id="card-total" onclick="selectKpiFilter('TOTAL')" class="kpi-card active-kpi bg-[#0f172a] text-white p-5 rounded-xl border border-slate-800 shadow">
         <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-300">TOTAL CASES</p>
         <p id="kpiTotal" class="text-4xl font-black mt-2">0</p>
       </div>
@@ -118,7 +117,7 @@
           </select>
         </div>
 
-        <!-- QUICK SEARCH (ONLY VEHICLE NO & OWNER NAME) -->
+        <!-- QUICK SEARCH (VEHICLE & OWNER NAME) -->
         <div class="md:col-span-3">
           <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">QUICK SEARCH</label>
           <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search Vehicle Number or Owner Name..." class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
@@ -164,6 +163,7 @@
   </main>
 
   <script>
+    // ⚠️ YAHAN APNA APPS SCRIPT WEB APP URL PASTE KAREIN
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw59kPHIVUQ9hc0B6Fh0qFBGAQsQLLUWXsnYS91brq8XHj10rv6tA4CaiK1MNkzWHJr/exec";
 
     const NEED_ACTION_CONDITIONS = [
@@ -182,7 +182,7 @@
 
     async function fetchData(isInitial = false) {
       const syncStatus = document.getElementById("syncStatus");
-      if (isInitial) syncStatus.style.opacity = "1";
+      if (isInitial && syncStatus) syncStatus.style.opacity = "1";
 
       try {
         const res = await fetch(APPS_SCRIPT_URL);
@@ -195,8 +195,10 @@
 
         applyFilters();
 
-        syncStatus.innerHTML = `<span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-500"></span>Live Updated`;
-        syncStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200";
+        if (syncStatus) {
+          syncStatus.innerHTML = `<span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-500"></span>Live Updated`;
+          syncStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200";
+        }
 
       } catch (err) {
         console.error("Silent Fetch Error:", err);
@@ -237,13 +239,18 @@
       const dateVal = document.getElementById("dateFilter").value;
       const searchVal = document.getElementById("searchInput").value.toLowerCase().trim().replace(/\s+/g, '');
 
-      // STEP 1: Apply State, Status, Date & Search Filter
+      // Filter Data
       let filtered = fullDataset.filter(item => {
         const matchesState = (stateVal === "ALL" || item.state === stateVal);
         const matchesRemark = (remarkVal === "ALL" || item.remark === remarkVal);
-        const matchesDate = (!dateVal || item.date === dateVal);
         
-        // Search strictly on Vehicle Number or Owner Name
+        // Flexible Date Matching
+        let matchesDate = true;
+        if (dateVal) {
+          matchesDate = item.date && item.date.includes(dateVal);
+        }
+        
+        // Search Vehicle Number or Owner Name
         const vehClean = (item.vehicle || "").toLowerCase().replace(/\s+/g, '');
         const ownClean = (item.owner || "").toLowerCase().replace(/\s+/g, '');
         const matchesSearch = (!searchVal || vehClean.includes(searchVal) || ownClean.includes(searchVal));
@@ -251,10 +258,10 @@
         return matchesState && matchesRemark && matchesDate && matchesSearch;
       });
 
-      // STEP 2: Update KPI Counters dynamically based on active filters
+      // Update Cards Count
       updateKpiCounters(filtered);
 
-      // STEP 3: Apply KPI Card Click Filter
+      // Apply Card Filter
       if (selectedKpi !== "TOTAL") {
         filtered = filtered.filter(item => {
           const remLower = (item.remark || "").toLowerCase().trim();
@@ -338,8 +345,13 @@
       tbody.appendChild(fragment);
     }
 
+    // FIXED LOCAL TIMEZONE TODAY FUNCTION
     function setTodayDate() {
-      document.getElementById("dateFilter").value = new Date().toISOString().split('T')[0];
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      document.getElementById("dateFilter").value = `${year}-${month}-${day}`;
       applyFilters();
     }
 
