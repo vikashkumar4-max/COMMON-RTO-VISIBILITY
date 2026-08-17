@@ -3,18 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>National Vehicle & Logistics Portal | Govt. of India</title>
-  <!-- Tailwind CSS & FontAwesome Icons -->
+  <title>PAN INDIA LIVE DASHBOARD</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
-    body { font-family: 'Roboto', sans-serif; background-color: #f1f5f9; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
     
-    .govt-header { background: linear-gradient(135deg, #001f3f 0%, #003366 100%); }
-    .tricolor-stripe {
-      height: 6px;
-      background: linear-gradient(90deg, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%);
+    .kpi-card {
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+    }
+    .kpi-card.active-kpi {
+      ring: 4px;
+      outline: 2px solid #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .top-bar-stripe {
+      height: 4px;
+      background: linear-gradient(90deg, #f97316 0%, #10b981 50%, #06b6d4 100%);
     }
 
     .table-container::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -22,226 +33,156 @@
     .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
 </head>
-<body class="min-h-screen pb-12 text-slate-800">
+<body class="min-h-screen text-slate-800 pb-10">
 
-  <!-- GOVT OFFICIAL TOP STRIP -->
-  <div class="bg-slate-900 text-slate-300 text-[11px] px-4 sm:px-8 py-1.5 flex justify-between items-center border-b border-slate-700">
-    <div class="flex items-center gap-2">
-      <span class="font-bold text-white tracking-wider">GOVERNMENT OF INDIA</span>
-      <span class="hidden sm:inline">|</span>
-      <span class="hidden sm:inline text-slate-400">MINISTRY OF ROAD TRANSPORT & HIGHWAYS</span>
-    </div>
-    <div class="font-mono text-amber-400 font-bold">WHEELSEYE PVT LTD</div>
-  </div>
+  <!-- TOP STRIPE -->
+  <div class="top-bar-stripe"></div>
 
-  <!-- LOGIN SCREEN MODAL -->
-  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md">
-    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center border-t-8 border-amber-500">
-      <div class="w-20 h-20 bg-slate-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-black shadow-inner border border-slate-200">
-        🇮🇳
-      </div>
-      <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Govt Official Portal</h2>
-      <p class="text-xs text-slate-500 mb-6 font-semibold">Pan India Fleet & Vehicle Live Tracking Portal</p>
+  <!-- HEADER -->
+  <header class="max-w-[1500px] mx-auto px-4 pt-4 pb-2">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 px-6 py-3 flex flex-wrap justify-between items-center gap-4">
       
-      <div class="p-4 bg-slate-50 rounded-lg mb-6 text-left border border-slate-200">
-        <p class="text-xs font-bold text-slate-700 mb-1">🔐 Secure Login Protocol:</p>
-        <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4">
-          <li>Sign in using official Workspace / Gmail account</li>
-          <li>Auto-session expires strictly in <strong>24 Hours</strong></li>
-        </ul>
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-amber-400 font-black text-xl shadow">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">PAN INDIA LIVE DASHBOARD</h1>
+          <span id="syncStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+            <span class="w-2 h-2 mr-1.5 rounded-full bg-amber-500 animate-ping"></span>
+            Syncing Data...
+          </span>
+        </div>
       </div>
 
-      <button onclick="handleGoogleSignIn()" class="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-lg shadow transition text-sm">
-        <i class="fab fa-google text-amber-400 text-base"></i> Sign in with Authorized Gmail
-      </button>
+      <div class="flex items-center gap-3">
+        <span class="bg-slate-100 text-slate-700 font-semibold px-4 py-1.5 rounded-lg text-xs border border-slate-200">
+          User: <strong class="text-slate-900">MRATYUNJAY</strong>
+        </span>
+        <button onclick="location.reload()" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-1.5 rounded-lg text-xs transition shadow-sm uppercase">
+          LOGOUT
+        </button>
+      </div>
+
     </div>
-  </div>
+  </header>
 
-  <!-- MAIN APPLICATION CONTENT -->
-  <div id="appContent" class="hidden">
-    
-    <!-- 1. GOVT STYLE HEADER -->
-    <header class="govt-header text-white shadow-lg">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          
-          <div class="flex items-center space-x-4">
-            <div class="bg-white/10 p-3.5 rounded-xl border border-white/20 shadow-inner">
-              <i class="fa-solid fa-truck-fast text-amber-400 text-3xl"></i>
-            </div>
-            <div>
-              <div class="flex items-center gap-3">
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight">PAN INDIA LIVE DASHBOARD</h1>
-                <span id="syncBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                  <span class="w-2 h-2 mr-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                  Live Data Sync
-                </span>
-              </div>
-              <p class="text-xs sm:text-sm text-slate-300 mt-0.5">MANAGED BY MRATYUNJAY</p>
-            </div>
-          </div>
+  <main class="max-w-[1500px] mx-auto px-4 mt-3 space-y-4">
 
-          <div class="flex items-center gap-3 bg-white/10 p-2.5 rounded-xl border border-white/10 backdrop-blur-md">
-            <div class="text-right">
-              <p id="userEmail" class="text-xs font-bold text-amber-300">User: Official Admin</p>
-              <p id="sessionTimer" class="text-[10px] text-slate-300">Session Valid: 24h</p>
-            </div>
-            <button onclick="fetchData(true)" title="Force Refresh Data" class="p-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg transition shadow flex items-center justify-center">
-              <i id="refreshIcon" class="fa-solid fa-rotate text-sm"></i>
-            </button>
-          </div>
-
-        </div>
+    <!-- KPI CARDS SECTION (EXACT COLOR MATCH FROM IMAGE) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- TOTAL CASES -->
+      <div id="card-total" onclick="selectKpiFilter('TOTAL')" class="kpi-card bg-[#0f172a] text-white p-5 rounded-xl border border-slate-800 shadow">
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-300">TOTAL CASES</p>
+        <p id="kpiTotal" class="text-4xl font-black mt-2">0</p>
       </div>
-      <div class="tricolor-stripe"></div>
-    </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <!-- CERTIFICATE ISSUED -->
+      <div id="card-issued" onclick="selectKpiFilter('ISSUED')" class="kpi-card bg-[#064e3b] text-white p-5 rounded-xl border border-emerald-900 shadow">
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-200">CERTIFICATE ISSUED</p>
+        <p id="kpiIssued" class="text-4xl font-black mt-2">0</p>
+      </div>
 
-      <!-- 2. DYNAMIC KPI CARDS (FILTER KE ACCORDING CHANGE HONGE) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- PENDING CASES -->
+      <div id="card-pending" onclick="selectKpiFilter('PENDING')" class="kpi-card bg-[#451a03] text-white p-5 rounded-xl border border-amber-900 shadow">
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-amber-200">PENDING CASES</p>
+        <p id="kpiPending" class="text-4xl font-black mt-2">0</p>
+      </div>
+
+      <!-- NEED ACTION / ALERT -->
+      <div id="card-action" onclick="selectKpiFilter('ACTION')" class="kpi-card bg-[#4c0519] text-white p-5 rounded-xl border border-rose-950 shadow">
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-rose-200">NEED ACTION / ALERT</p>
+        <p id="kpiAction" class="text-4xl font-black mt-2">0</p>
+      </div>
+
+    </div>
+
+    <!-- FILTER & SEARCH PANEL -->
+    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
         
-        <div class="bg-slate-900 text-white p-5 rounded-xl shadow border-l-8 border-blue-500 flex flex-col justify-between">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">TOTAL CASES</p>
-          <p id="kpiTotal" class="text-4xl font-black mt-2">0</p>
+        <!-- FILTER BY STATE -->
+        <div class="md:col-span-3">
+          <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">FILTER BY STATE</label>
+          <select id="stateFilter" onchange="applyFilters()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
+            <option value="ALL">All States</option>
+          </select>
         </div>
 
-        <div class="bg-emerald-950 text-emerald-100 p-5 rounded-xl shadow border-l-8 border-emerald-500 flex flex-col justify-between">
-          <p class="text-xs font-bold uppercase tracking-wider text-emerald-400">CERTIFICATE ISSUED</p>
-          <p id="kpiIssued" class="text-4xl font-black mt-2 text-emerald-300">0</p>
+        <!-- FILTER BY STATUS -->
+        <div class="md:col-span-3">
+          <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">FILTER BY STATUS</label>
+          <select id="remarkFilter" onchange="applyFilters()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
+            <option value="ALL">All Status / Remarks</option>
+          </select>
         </div>
 
-        <div class="bg-amber-950 text-amber-100 p-5 rounded-xl shadow border-l-8 border-amber-500 flex flex-col justify-between">
-          <p class="text-xs font-bold uppercase tracking-wider text-amber-400">PENDING CASES</p>
-          <p id="kpiPending" class="text-4xl font-black mt-2 text-amber-300">0</p>
+        <!-- QUICK SEARCH (ONLY VEHICLE NO & OWNER NAME) -->
+        <div class="md:col-span-3">
+          <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">QUICK SEARCH</label>
+          <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search Vehicle Number or Owner Name..." class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
         </div>
 
-        <div class="bg-rose-950 text-rose-100 p-5 rounded-xl shadow border-l-8 border-rose-600 flex flex-col justify-between">
-          <p class="text-xs font-bold uppercase tracking-wider text-rose-400">NEED ACTION / ALERT</p>
-          <p id="kpiAction" class="text-4xl font-black mt-2 text-rose-300">0</p>
+        <!-- DATE & TODAY FILTER -->
+        <div class="md:col-span-3">
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">DATE FILTER</label>
+            <button onclick="setTodayDate()" class="text-[10px] font-black text-amber-600 hover:text-amber-800 uppercase">TODAY</button>
+          </div>
+          <div class="flex gap-2">
+            <input type="date" id="dateFilter" onchange="applyFilters()" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800">
+            <button onclick="clearDate()" class="px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg border border-slate-300 transition">Clear</button>
+          </div>
         </div>
 
       </div>
+    </div>
 
-      <!-- 3. ADVANCED FILTERS BAR (DATE ON RIGHT SIDE) -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-300 p-5">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-          
-          <div class="md:col-span-3">
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">State / Dept</label>
-            <select id="stateFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
-              <option value="ALL">All States</option>
-            </select>
-          </div>
-
-          <div class="md:col-span-3">
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status / Remark</label>
-            <select id="remarkFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
-              <option value="ALL">All Status / Remarks</option>
-            </select>
-          </div>
-
-          <div class="md:col-span-3">
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Quick Search</label>
-            <input type="text" id="searchInput" list="searchSuggestions" oninput="applyFilters()" placeholder="Search Vehicle, IMEI, Operator..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
-            <datalist id="searchSuggestions"></datalist>
-          </div>
-
-          <!-- DATE SECTION SHIFTED RIGHT SIDE -->
-          <div class="md:col-span-3 flex flex-col justify-end">
-            <div class="flex justify-between items-center mb-1">
-              <label class="block text-xs font-bold text-slate-700 uppercase">Select Date</label>
-              <button onclick="setTodayDate()" class="text-[11px] font-black text-amber-600 hover:text-amber-700 underline">TODAY</button>
-            </div>
-            <div class="flex gap-2">
-              <input type="date" id="dateFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
-              <button onclick="clearDate()" class="px-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition">Clear</button>
-            </div>
-          </div>
-
-        </div>
+    <!-- MAIN DATA TABLE -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="table-container overflow-x-auto max-h-[620px]">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-[#0f172a] text-white text-[11px] font-extrabold uppercase tracking-wider sticky top-0 z-10">
+            <tr>
+              <th class="px-4 py-3.5 border-b border-slate-800">SR. NO.</th>
+              <th class="px-4 py-3.5 border-b border-slate-800">VEHICLE NUMBER</th>
+              <th class="px-4 py-3.5 border-b border-slate-800">REMARK / STATUS</th>
+              <th class="px-4 py-3.5 border-b border-slate-800">DATE</th>
+              <th class="px-4 py-3.5 border-b border-slate-800">OWNER NAME</th>
+              <th class="px-4 py-3.5 border-b border-slate-800">MOBILE NUMBER</th>
+              <th class="px-4 py-3.5 border-b border-slate-800">TIMESTAMP</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-200 text-xs font-semibold text-slate-800">
+            <!-- Data Rows Render Here -->
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- 4. DATA TABLE -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-300 overflow-hidden">
-        
-        <div class="px-6 py-3 bg-slate-100 border-b border-slate-300 flex justify-between items-center">
-          <p class="text-xs font-bold text-slate-700 uppercase">
-            Showing Records: <span id="showingCount" class="text-amber-600 font-black">0</span> of <span id="totalDataCount">0</span>
-          </p>
-        </div>
-
-        <div class="table-container overflow-x-auto max-h-[600px]">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-900 text-white text-xs font-black uppercase tracking-wider sticky top-0 z-10">
-              <tr>
-                <th class="px-4 py-3 border-b border-slate-800">SR. NO.</th>
-                <th class="px-4 py-3 border-b border-slate-800">VEHICLE NUMBER</th>
-                <th class="px-4 py-3 border-b border-slate-800">REMARK / STATUS</th>
-                <th class="px-4 py-3 border-b border-slate-800">DATE</th>
-                <th class="px-4 py-3 border-b border-slate-800">OPERATOR NAME</th>
-                <th class="px-4 py-3 border-b border-slate-800">IMEI</th>
-                <th class="px-4 py-3 border-b border-slate-800">STATE / DEPT</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody" class="divide-y divide-slate-200 text-xs font-semibold text-slate-800">
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
-    </main>
-  </div>
+  </main>
 
   <script>
-    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6EqCpFvhmbHvLJms9WAiuR-1lftESAsUt9vj7x71DlVYbxuslyALmLpp3Xs_frDcW/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw59kPHIVUQ9hc0B6Fh0qFBGAQsQLLUWXsnYS91brq8XHj10rv6tA4CaiK1MNkzWHJr/exec";
 
-    // EXACT ALERT CONDITIONS SPECIFIED BY USER
     const NEED_ACTION_CONDITIONS = [
-      "top-up done",
-      "top-up pending",
-      "check not clear",
-      "only activation pending",
-      "tagging pending",
-      "tagging done",
-      "inventory"
+      "top-up done", "top-up pending", "check not clear", 
+      "only activation pending", "tagging pending", "tagging done", "inventory"
     ];
 
     let fullDataset = [];
-    let filteredDataset = [];
+    let selectedKpi = "TOTAL";
 
-    window.onload = function() { checkAuthSession(); };
+    window.onload = function() {
+      fetchData(true);
+      // SILENT BACKGROUND FETCH EVERY 10 SECONDS
+      setInterval(() => { fetchData(false); }, 10000);
+    };
 
-    function checkAuthSession() {
-      const session = JSON.parse(localStorage.getItem("govt_dashboard_session"));
-      const now = new Date().getTime();
-      
-      if (session && (now - session.timestamp < 86400000)) {
-        document.getElementById("loginModal").classList.add("hidden");
-        document.getElementById("appContent").classList.remove("hidden");
-        document.getElementById("userEmail").innerText = "User: " + session.email;
-        fetchData();
-      } else {
-        localStorage.removeItem("govt_dashboard_session");
-        document.getElementById("loginModal").classList.remove("hidden");
-      }
-    }
-
-    function handleGoogleSignIn() {
-      const userMail = prompt("Enter Authorized Official Gmail ID:", "admin@gov.in");
-      if (userMail && userMail.includes("@")) {
-        localStorage.setItem("govt_dashboard_session", JSON.stringify({ email: userMail, timestamp: new Date().getTime() }));
-        checkAuthSession();
-      } else {
-        alert("Please enter a valid Gmail address!");
-      }
-    }
-
-    async function fetchData(forceRefresh = false) {
-      const refreshIcon = document.getElementById("refreshIcon");
-      refreshIcon.classList.add("fa-spin");
+    async function fetchData(isInitial = false) {
+      const syncStatus = document.getElementById("syncStatus");
+      if (isInitial) syncStatus.style.opacity = "1";
 
       try {
         const res = await fetch(APPS_SCRIPT_URL);
@@ -249,31 +190,25 @@
         
         fullDataset = data.rows || [];
 
-        populateSelect("stateFilter", data.filterOptions.states, "All States");
-        populateSelect("remarkFilter", data.filterOptions.remarks, "All Status / Remarks");
-
-        const datalist = document.getElementById("searchSuggestions");
-        datalist.innerHTML = "";
-        (data.suggestions || []).forEach(item => {
-          const opt = document.createElement("option");
-          opt.value = item;
-          datalist.appendChild(opt);
-        });
+        populateSelect("stateFilter", data.states || [], "All States");
+        populateSelect("remarkFilter", data.remarks || [], "All Status / Remarks");
 
         applyFilters();
 
+        syncStatus.innerHTML = `<span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-500"></span>Live Updated`;
+        syncStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200";
+
       } catch (err) {
-        console.error("Data Fetching Error:", err);
-      } finally {
-        refreshIcon.classList.remove("fa-spin");
+        console.error("Silent Fetch Error:", err);
       }
     }
 
     function populateSelect(id, items, defaultText) {
       const select = document.getElementById(id);
       const currentVal = select.value;
+      
       select.innerHTML = `<option value="ALL">${defaultText}</option>`;
-      (items || []).forEach(item => {
+      items.forEach(item => {
         if (!item) return;
         const opt = document.createElement("option");
         opt.value = item;
@@ -283,30 +218,60 @@
       select.value = currentVal || "ALL";
     }
 
-    // MAIN FILTERING & DYNAMIC KPI CALCULATION
+    function selectKpiFilter(type) {
+      selectedKpi = type;
+      
+      document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active-kpi'));
+      
+      if (type === 'TOTAL') document.getElementById('card-total').classList.add('active-kpi');
+      if (type === 'ISSUED') document.getElementById('card-issued').classList.add('active-kpi');
+      if (type === 'PENDING') document.getElementById('card-pending').classList.add('active-kpi');
+      if (type === 'ACTION') document.getElementById('card-action').classList.add('active-kpi');
+
+      applyFilters();
+    }
+
     function applyFilters() {
       const stateVal = document.getElementById("stateFilter").value;
       const remarkVal = document.getElementById("remarkFilter").value;
       const dateVal = document.getElementById("dateFilter").value;
-      const searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
+      const searchVal = document.getElementById("searchInput").value.toLowerCase().trim().replace(/\s+/g, '');
 
-      filteredDataset = fullDataset.filter(item => {
+      // STEP 1: Apply State, Status, Date & Search Filter
+      let filtered = fullDataset.filter(item => {
         const matchesState = (stateVal === "ALL" || item.state === stateVal);
         const matchesRemark = (remarkVal === "ALL" || item.remark === remarkVal);
         const matchesDate = (!dateVal || item.date === dateVal);
         
-        const searchPool = `${item.vehicle} ${item.imei} ${item.operator} ${item.project} ${item.remark}`.toLowerCase();
-        const matchesSearch = (!searchVal || searchPool.includes(searchVal));
+        // Search strictly on Vehicle Number or Owner Name
+        const vehClean = (item.vehicle || "").toLowerCase().replace(/\s+/g, '');
+        const ownClean = (item.owner || "").toLowerCase().replace(/\s+/g, '');
+        const matchesSearch = (!searchVal || vehClean.includes(searchVal) || ownClean.includes(searchVal));
 
         return matchesState && matchesRemark && matchesDate && matchesSearch;
       });
 
-      calculateDynamicKPIs(filteredDataset);
-      renderTable();
+      // STEP 2: Update KPI Counters dynamically based on active filters
+      updateKpiCounters(filtered);
+
+      // STEP 3: Apply KPI Card Click Filter
+      if (selectedKpi !== "TOTAL") {
+        filtered = filtered.filter(item => {
+          const remLower = (item.remark || "").toLowerCase().trim();
+          const isAction = NEED_ACTION_CONDITIONS.some(cond => remLower.includes(cond));
+          const isIssued = remLower.includes("issued") || remLower.includes("approved") || remLower.includes("passed") || remLower.includes("completed");
+
+          if (selectedKpi === "ACTION") return isAction;
+          if (selectedKpi === "ISSUED") return !isAction && isIssued;
+          if (selectedKpi === "PENDING") return !isAction && !isIssued;
+          return true;
+        });
+      }
+
+      renderTable(filtered);
     }
 
-    // RE-CALCULATE ALL 4 KPI CARDS FOR FILTERED DATA
-    function calculateDynamicKPIs(data) {
+    function updateKpiCounters(data) {
       let total = data.length;
       let issued = 0;
       let pending = 0;
@@ -314,64 +279,59 @@
 
       data.forEach(row => {
         const rem = (row.remark || "").toLowerCase().trim();
-
-        // Check if remark matches any specified alert condition
         const isAction = NEED_ACTION_CONDITIONS.some(cond => rem.includes(cond));
+        const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
 
         if (isAction) {
           actionNeeded++;
-        } else if (rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed")) {
+        } else if (isIssued) {
           issued++;
         } else {
           pending++;
         }
       });
 
-      // Update KPI Cards
       document.getElementById("kpiTotal").innerText = total;
       document.getElementById("kpiIssued").innerText = issued;
       document.getElementById("kpiPending").innerText = pending;
       document.getElementById("kpiAction").innerText = actionNeeded;
     }
 
-    function renderTable() {
+    function renderTable(data) {
       const tbody = document.getElementById("tableBody");
       tbody.innerHTML = "";
 
-      document.getElementById("showingCount").innerText = filteredDataset.length;
-      document.getElementById("totalDataCount").innerText = fullDataset.length;
-
-      if (filteredDataset.length === 0) {
+      if (data.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400 font-bold">No records found matching criteria</td></tr>`;
         return;
       }
 
       const fragment = document.createDocumentFragment();
-      filteredDataset.forEach((row, idx) => {
+      data.forEach((row, idx) => {
         const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-100 transition border-b border-slate-200";
+        tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
 
-        let statusClass = "bg-amber-100 text-amber-800 border-amber-300";
+        let statusClass = "bg-amber-100 text-amber-900 border-amber-300";
         const remLower = (row.remark || "").toLowerCase();
         
         if (NEED_ACTION_CONDITIONS.some(c => remLower.includes(c))) {
-          statusClass = "bg-rose-100 text-rose-800 border-rose-300";
+          statusClass = "bg-rose-100 text-rose-900 border-rose-300";
         } else if (remLower.includes("issued") || remLower.includes("approved") || remLower.includes("passed")) {
-          statusClass = "bg-emerald-100 text-emerald-800 border-emerald-300";
+          statusClass = "bg-emerald-100 text-emerald-900 border-emerald-300";
         }
 
         tr.innerHTML = `
           <td class="px-4 py-3 font-bold text-slate-500">${idx + 1}</td>
           <td class="px-4 py-3 font-black text-slate-900">${row.vehicle || '-'}</td>
           <td class="px-4 py-3">
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${statusClass}">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold border ${statusClass}">
               ${row.remark || '-'}
             </span>
           </td>
           <td class="px-4 py-3 font-bold text-slate-700">${row.date || '-'}</td>
-          <td class="px-4 py-3 text-slate-700">${row.operator || '-'}</td>
-          <td class="px-4 py-3 font-mono text-slate-600">${row.imei || '-'}</td>
-          <td class="px-4 py-3 font-bold text-slate-700">${row.state || '-'}</td>
+          <td class="px-4 py-3 font-medium text-slate-800">${row.owner || '-'}</td>
+          <td class="px-4 py-3 font-mono text-slate-600">${row.mobile || '-'}</td>
+          <td class="px-4 py-3 font-mono text-slate-500 text-[11px]">${row.timestamp || '-'}</td>
         `;
         fragment.appendChild(tr);
       });
