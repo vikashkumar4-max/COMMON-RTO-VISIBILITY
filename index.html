@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>National Vehicle & Certificate Tracking Portal</title>
+  <title>Pan India Certification Tracking Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -15,7 +14,6 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
 
-  <!-- GOVT BRANDING TOP BANNER -->
   <div class="bg-slate-900 text-slate-300 text-[11px] px-6 py-1.5 flex justify-between items-center border-b border-slate-800">
     <div class="flex items-center gap-3 font-medium">
       <span><i class="fa-solid fa-shield-halved text-amber-500 mr-1"></i> Official Management Portal</span>
@@ -25,7 +23,6 @@
     <div id="liveTime" class="font-mono text-slate-400">--:--:--</div>
   </div>
 
-  <!-- MAIN HEADER -->
   <header class="bg-white border-b border-slate-300 shadow-sm sticky top-0 z-40">
     <div class="max-w-[1700px] mx-auto px-6 py-3 flex flex-wrap justify-between items-center gap-4">
       
@@ -35,23 +32,18 @@
         </div>
         <div>
           <h1 class="text-xl font-bold tracking-tight text-slate-900 uppercase">PAN INDIA CERTIFICATION SYSTEM</h1>
-          <p class="text-xs text-slate-500 font-semibold">MANAGED BY MRATYUNJAY</p>
+          <p class="text-xs text-slate-500 font-semibold">MANAGED OPERATIONS DASHBOARD</p>
         </div>
       </div>
 
-      <!-- PORTAL SWITCHERS / AUTH -->
       <div class="flex items-center gap-3">
         <div id="userInfoBadge" class="hidden text-right">
           <p id="loggedInAdminEmail" class="text-xs font-bold text-indigo-900"></p>
           <span class="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-black uppercase">Admin Authorized</span>
         </div>
 
-        <button id="btnTeamView" onclick="switchView('TEAM')" class="px-4 py-2 bg-indigo-900 text-white text-xs font-bold rounded hover:bg-indigo-950 transition shadow-sm">
-          <i class="fa-solid fa-list-check mr-1.5"></i> Live Operations View
-        </button>
-
-        <button id="btnAdminPortal" onclick="openAdminAuthModal()" class="px-4 py-2 bg-amber-500 text-slate-950 text-xs font-bold rounded hover:bg-amber-600 transition shadow-sm">
-          <i class="fa-solid fa-user-shield mr-1.5"></i> Admin Login
+        <button onclick="openAdminAuthModal()" class="px-4 py-2 bg-amber-500 text-slate-950 text-xs font-bold rounded hover:bg-amber-600 transition shadow-sm">
+          <i class="fa-solid fa-user-shield mr-1.5"></i> Admin Dashboard
         </button>
 
         <button id="btnLogout" onclick="logoutAdmin()" class="hidden px-3 py-2 bg-rose-600 text-white text-xs font-bold rounded hover:bg-rose-700 transition">
@@ -62,7 +54,6 @@
     </div>
   </header>
 
-  <!-- ADMIN AUTH MODAL -->
   <div id="adminAuthModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm">
     <div class="bg-white border border-slate-300 rounded-lg p-6 max-w-md w-full shadow-2xl">
       <div class="flex justify-between items-center pb-3 border-b border-slate-200">
@@ -70,7 +61,7 @@
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
       </div>
       <div class="py-4">
-        <p class="text-xs text-slate-600 mb-3">Enter your authorized Admin Email ID to access executive metrics and charts.</p>
+        <p class="text-xs text-slate-600 mb-3">Enter authorized Admin Email ID to access metrics.</p>
         <input type="email" id="adminEmailInput" placeholder="Enter admin email address..." class="w-full bg-slate-50 border border-slate-300 text-xs font-bold text-slate-800 rounded p-3 focus:outline-none focus:border-indigo-900">
         <p id="authErrorMsg" class="text-xs text-rose-600 font-bold mt-2 hidden"></p>
       </div>
@@ -81,22 +72,17 @@
     </div>
   </div>
 
-  <!-- MAIN CONTAINER -->
   <main class="max-w-[1700px] mx-auto px-6 mt-6">
 
-    <!-- LOADING SPINNER -->
     <div id="loadingBox" class="bg-white p-12 rounded border border-slate-300 shadow-sm text-center">
       <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-900"></i>
       <p class="text-xs font-bold text-slate-600 mt-3 uppercase tracking-wider">Fetching live data feed...</p>
     </div>
 
-    <!-- LIVE OPERATIONS VIEW (TEAM) -->
     <div id="teamViewSection" class="space-y-4 hidden">
       
-      <!-- CONTROLS & FILTERS -->
       <div class="bg-white p-4 rounded border border-slate-300 shadow-sm flex flex-wrap gap-3 items-center justify-between">
         <div class="flex flex-wrap gap-3 items-center flex-1">
-          
           <div class="relative min-w-[260px]">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
             <input type="text" id="searchInput" oninput="debounceFilter()" placeholder="Search Vehicle, Owner, Device..." class="w-full bg-slate-50 border border-slate-300 text-xs font-bold pl-9 pr-3 py-2.5 rounded focus:outline-none focus:border-indigo-900">
@@ -122,7 +108,6 @@
         </div>
       </div>
 
-      <!-- TABLE -->
       <div class="bg-white rounded border border-slate-300 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -138,7 +123,6 @@
               </tr>
             </thead>
             <tbody id="tableBody" class="divide-y divide-slate-200 text-xs">
-              <!-- Rows inserted dynamically -->
             </tbody>
           </table>
         </div>
@@ -149,8 +133,8 @@
   </main>
 
   <script>
-    // ⚠️ ENTER YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzX3-82VOmr7UKZkrZ0GEshLA4E9J4vnTflCPZHAyBJFhuOTjQlETgxNJXnKxrJ6n0n/exec";
+    // ⚠️ PASTE YOUR DEPLOYED WEB APP URL HERE
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyM_q9VK_0WVSPkbGrbdApu75nENhSUGeWgLK46jTvZn5fWzq418wLu3eUdprvrbyUw/exec";
 
     const NEED_ACTION_CONDITIONS = [
       "top-up done", "top-up pending", "check not clear", 
@@ -195,12 +179,13 @@
         populateDropdown("remarkFilter", data.remarks || []);
 
         document.getElementById("loadingBox").classList.add("hidden");
+        document.getElementById("teamViewSection").classList.remove("hidden");
 
         if (data.isAdmin === true) {
           setupAdminHeader(currentAdminEmail);
         }
 
-        switchView("TEAM");
+        applyFilters();
       } catch (err) {
         console.error("Data Load Error:", err);
         document.getElementById("loadingBox").innerHTML = `
@@ -218,17 +203,6 @@
         opt.innerText = item;
         select.appendChild(opt);
       });
-    }
-
-    function switchView(view) {
-      const teamSec = document.getElementById("teamViewSection");
-      const btnTeam = document.getElementById("btnTeamView");
-
-      if (view === "TEAM") {
-        teamSec.classList.remove("hidden");
-        btnTeam.classList.add("ring-2", "ring-indigo-900");
-        applyFilters();
-      }
     }
 
     function openAdminAuthModal() {
@@ -278,7 +252,6 @@
     function setupAdminHeader(email) {
       document.getElementById("userInfoBadge").classList.remove("hidden");
       document.getElementById("loggedInAdminEmail").innerText = email;
-      document.getElementById("btnAdminPortal").innerText = "Admin Metrics Portal";
       document.getElementById("btnLogout").classList.remove("hidden");
     }
 
