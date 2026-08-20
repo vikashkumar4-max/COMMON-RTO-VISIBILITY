@@ -1,116 +1,116 @@
 function renderEmployeePerformance(rows) {
-      const tbody = document.getElementById("empPerformanceTableBody");
-      tbody.innerHTML = "";
+  const tbody = document.getElementById("empPerformanceTableBody");
+  tbody.innerHTML = "";
 
-      if (!employeeMap || employeeMap.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-medium">No employee mapping added in Employee_Mapping Tab.</td></tr>`;
-        return;
-      }
+  if (!employeeMap || employeeMap.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-medium">No employee mapping added in Employee_Mapping Tab.</td></tr>`;
+    return;
+  }
 
-      employeeMap.forEach(empObj => {
-        const empName = empObj.name;
-        const assignedStr = empObj.assignedStr;
-        const statesList = empObj.statesList || [];
+  employeeMap.forEach(empObj => {
+    const empName = empObj.name;
+    const assignedStr = empObj.assignedStr;
+    const statesList = empObj.statesList || [];
 
-        let empTotal = 0;
-        let empIssued = 0;
-        let empPending = 0;
+    let empTotal = 0;
+    let empIssued = 0;
+    let empPending = 0;
 
-        // Filter rows matching any assigned short state/project code
-        rows.forEach(r => {
-          const rowProject = (r.state || "").trim().toUpperCase();
-          if (!rowProject) return;
+    // Filter rows matching any assigned short state/project code
+    rows.forEach(r => {
+      const rowProject = (r.state || "").trim().toUpperCase();
+      if (!rowProject) return;
 
-          // Check if row's project matches any assigned state for this employee
-          const isMatched = statesList.some(st => {
-            const code = st.toUpperCase();
-            return rowProject === code || rowProject.includes(code) || code.includes(rowProject);
-          });
-
-          if (isMatched) {
-            empTotal++;
-            const rem = (r.remark || "").toLowerCase().trim();
-            const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
-            if (isIssued) empIssued++;
-            else empPending++;
-          }
-        });
-
-        const conversion = empTotal > 0 ? Math.round((empIssued / empTotal) * 100) : 0;
-
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-800/50 transition border-b border-slate-800";
-        tr.innerHTML = `
-          <td class="p-3 font-bold text-white">${empName}</td>
-          <td class="p-3 text-amber-400 font-semibold">${assignedStr}</td>
-          <td class="p-3 text-center text-slate-300 font-bold">${empTotal}</td>
-          <td class="p-3 text-center text-emerald-400 font-bold">${empIssued}</td>
-          <td class="p-3 text-center text-amber-400 font-bold">${empPending}</td>
-          <td class="p-3 text-center">
-            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[11px] font-bold">${conversion}%</span>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // BEST PERFORMER CELEBRATION POPUP LOGIC FOR MULTI-STATE EMPLOYEES
-    function openBestPerformerModal() {
-      const timeframes = ["DAY", "WEEK", "MONTH", "YEAR"];
-
-      timeframes.forEach(tf => {
-        const rows = getFilteredRowsByTimeframe(tf);
-        const stateMap = {};
-
-        rows.forEach(r => {
-          const st = r.state || "General";
-          if (!stateMap[st]) stateMap[st] = { total: 0, issued: 0 };
-          stateMap[st].total++;
-
-          const rem = (r.remark || "").toLowerCase().trim();
-          const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
-          if (isIssued) stateMap[st].issued++;
-        });
-
-        let bestState = "-";
-        let bestPct = -1;
-
-        Object.keys(stateMap).forEach(st => {
-          const t = stateMap[st].total;
-          const i = stateMap[st].issued;
-          const pct = t > 0 ? Math.round((i / t) * 100) : 0;
-          if (pct > bestPct && t > 0) {
-            bestPct = pct;
-            bestState = st;
-          }
-        });
-
-        let bestEmp = "-";
-        if (bestState !== "-" && employeeMap && employeeMap.length > 0) {
-          const matchedEmps = [];
-          employeeMap.forEach(eObj => {
-            const statesList = eObj.statesList || [];
-            const isMatch = statesList.some(st => {
-              const code = st.toUpperCase();
-              const targetState = bestState.toUpperCase();
-              return targetState === code || targetState.includes(code) || code.includes(targetState);
-            });
-            if (isMatch) matchedEmps.push(eObj.name);
-          });
-
-          if (matchedEmps.length > 0) {
-            bestEmp = matchedEmps.join(", ");
-          }
-        }
-
-        document.getElementById(`bpState-${tf}`).innerText = bestState;
-        document.getElementById(`bpEmp-${tf}`).innerText = bestEmp;
-        document.getElementById(`bpScore-${tf}`).innerText = bestPct >= 0 ? `Score: ${bestPct}% Conversion` : "Score: N/A";
+      // Check if row's project matches any assigned state for this employee
+      const isMatched = statesList.some(st => {
+        const code = st.toUpperCase();
+        return rowProject === code || rowProject.includes(code) || code.includes(rowProject);
       });
 
-      document.getElementById("bestPerformerModal").classList.remove("hidden");
+      if (isMatched) {
+        empTotal++;
+        const rem = (r.remark || "").toLowerCase().trim();
+        const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
+        if (isIssued) empIssued++;
+        else empPending++;
+      }
+    });
 
-      if (typeof confetti === 'function') {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    const conversion = empTotal > 0 ? Math.round((empIssued / empTotal) * 100) : 0;
+
+    const tr = document.createElement("tr");
+    tr.className = "hover:bg-slate-800/50 transition border-b border-slate-800";
+    tr.innerHTML = `
+      <td class="p-3 font-bold text-white">${empName}</td>
+      <td class="p-3 text-amber-400 font-semibold">${assignedStr}</td>
+      <td class="p-3 text-center text-slate-300 font-bold">${empTotal}</td>
+      <td class="p-3 text-center text-emerald-400 font-bold">${empIssued}</td>
+      <td class="p-3 text-center text-amber-400 font-bold">${empPending}</td>
+      <td class="p-3 text-center">
+        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[11px] font-bold">${conversion}%</span>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// BEST PERFORMER CELEBRATION POPUP LOGIC FOR MULTI-STATE EMPLOYEES
+function openBestPerformerModal() {
+  const timeframes = ["DAY", "WEEK", "MONTH", "YEAR"];
+
+  timeframes.forEach(tf => {
+    const rows = getFilteredRowsByTimeframe(tf);
+    const stateMap = {};
+
+    rows.forEach(r => {
+      const st = r.state || "General";
+      if (!stateMap[st]) stateMap[st] = { total: 0, issued: 0 };
+      stateMap[st].total++;
+
+      const rem = (r.remark || "").toLowerCase().trim();
+      const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
+      if (isIssued) stateMap[st].issued++;
+    });
+
+    let bestState = "-";
+    let bestPct = -1;
+
+    Object.keys(stateMap).forEach(st => {
+      const t = stateMap[st].total;
+      const i = stateMap[st].issued;
+      const pct = t > 0 ? Math.round((i / t) * 100) : 0;
+      if (pct > bestPct && t > 0) {
+        bestPct = pct;
+        bestState = st;
+      }
+    });
+
+    let bestEmp = "-";
+    if (bestState !== "-" && employeeMap && employeeMap.length > 0) {
+      const matchedEmps = [];
+      employeeMap.forEach(eObj => {
+        const statesList = eObj.statesList || [];
+        const isMatch = statesList.some(st => {
+          const code = st.toUpperCase();
+          const targetState = bestState.toUpperCase();
+          return targetState === code || targetState.includes(code) || code.includes(targetState);
+        });
+        if (isMatch) matchedEmps.push(eObj.name);
+      });
+
+      if (matchedEmps.length > 0) {
+        bestEmp = matchedEmps.join(", ");
       }
     }
+
+    document.getElementById(`bpState-${tf}`).innerText = bestState;
+    document.getElementById(`bpEmp-${tf}`).innerText = bestEmp;
+    document.getElementById(`bpScore-${tf}`).innerText = bestPct >= 0 ? `Score: ${bestPct}% Conversion` : "Score: N/A";
+  });
+
+  document.getElementById("bestPerformerModal").classList.remove("hidden");
+
+  if (typeof confetti === 'function') {
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+  }
+}
