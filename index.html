@@ -8,12 +8,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
-    body { font-family: 'Roboto', sans-serif; }
+    
+    /* Code protection: Disable text selection */
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      user-select: none; 
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
     .mono-font { font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
 
+  <!-- Top Bar -->
   <div class="bg-slate-900 text-slate-300 text-[11px] px-6 py-1.5 flex justify-between items-center border-b border-slate-800">
     <div class="flex items-center gap-3 font-medium">
       <span><i class="fa-solid fa-shield-halved text-amber-500 mr-1"></i> Official Management Portal</span>
@@ -23,55 +32,22 @@
     <div id="liveTime" class="font-mono text-slate-400">--:--:--</div>
   </div>
 
+  <!-- Header -->
   <header class="bg-white border-b border-slate-300 shadow-sm sticky top-0 z-40">
     <div class="max-w-[1700px] mx-auto px-6 py-3 flex flex-wrap justify-between items-center gap-4">
-      
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 bg-indigo-900 text-white rounded-md flex items-center justify-center font-black text-2xl shadow">
           <i class="fa-solid fa-building-columns"></i>
         </div>
         <div>
           <h1 class="text-xl font-bold tracking-tight text-slate-900 uppercase">PAN INDIA CERTIFICATION SYSTEM</h1>
-          <p class="text-xs text-slate-500 font-semibold">MANAGED OPERATIONS DASHBOARD</p>
+          <p class="text-xs text-slate-500 font-semibold">USER OPERATIONS DASHBOARD</p>
         </div>
       </div>
-
-      <div class="flex items-center gap-3">
-        <div id="userInfoBadge" class="hidden text-right">
-          <p id="loggedInAdminEmail" class="text-xs font-bold text-indigo-900"></p>
-          <span class="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-black uppercase">Admin Authorized</span>
-        </div>
-
-        <button onclick="openAdminAuthModal()" class="px-4 py-2 bg-amber-500 text-slate-950 text-xs font-bold rounded hover:bg-amber-600 transition shadow-sm">
-          <i class="fa-solid fa-user-shield mr-1.5"></i> Admin Dashboard
-        </button>
-
-        <button id="btnLogout" onclick="logoutAdmin()" class="hidden px-3 py-2 bg-rose-600 text-white text-xs font-bold rounded hover:bg-rose-700 transition">
-          Logout
-        </button>
-      </div>
-
     </div>
   </header>
 
-  <div id="adminAuthModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm">
-    <div class="bg-white border border-slate-300 rounded-lg p-6 max-w-md w-full shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-200">
-        <h3 class="text-sm font-bold uppercase text-slate-900"><i class="fa-solid fa-lock text-amber-600 mr-2"></i>Admin Authentication</h3>
-        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
-      </div>
-      <div class="py-4">
-        <p class="text-xs text-slate-600 mb-3">Enter authorized Admin Email ID to access metrics.</p>
-        <input type="email" id="adminEmailInput" placeholder="Enter admin email address..." class="w-full bg-slate-50 border border-slate-300 text-xs font-bold text-slate-800 rounded p-3 focus:outline-none focus:border-indigo-900">
-        <p id="authErrorMsg" class="text-xs text-rose-600 font-bold mt-2 hidden"></p>
-      </div>
-      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
-        <button onclick="closeAdminModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded hover:bg-slate-300">Cancel</button>
-        <button onclick="verifyAdminAccess()" class="px-4 py-2 bg-indigo-900 text-white text-xs font-bold rounded hover:bg-indigo-950">Authenticate</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Main Content -->
   <main class="max-w-[1700px] mx-auto px-6 mt-6">
 
     <div id="loadingBox" class="bg-white p-12 rounded border border-slate-300 shadow-sm text-center">
@@ -81,6 +57,7 @@
 
     <div id="teamViewSection" class="space-y-4 hidden">
       
+      <!-- Filters -->
       <div class="bg-white p-4 rounded border border-slate-300 shadow-sm flex flex-wrap gap-3 items-center justify-between">
         <div class="flex flex-wrap gap-3 items-center flex-1">
           <div class="relative min-w-[260px]">
@@ -108,6 +85,7 @@
         </div>
       </div>
 
+      <!-- User Dashboard Data Table -->
       <div class="bg-white rounded border border-slate-300 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -133,8 +111,8 @@
   </main>
 
   <script>
-    // ⚠️ PASTE YOUR DEPLOYED WEB APP URL HERE
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyByPxGZXxL668_veDgSX0jx7KAUkG7nfofdYESz4Qt7dmEjhchRh4cRZbpYgYnjw/exec";
+    // ⚠️ APNI NEW GOOGLE APPS SCRIPT KA DEPLOYED URL YAHAN PASTE KAREIN
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxtZNbTVadyUQvyWvN9RMnaE8LMMFUpwYn_7dXG2r0wOQqy2--wXYIVCZFeLL5pHVOn/exec";
 
     const NEED_ACTION_CONDITIONS = [
       "top-up done", "top-up pending", "check not clear", 
@@ -143,18 +121,11 @@
 
     let fullRows = [];
     let filteredRows = [];
-    let currentAdminEmail = "";
     let debounceTimer = null;
 
     window.onload = function() {
       updateClock();
       setInterval(updateClock, 1000);
-      
-      const savedEmail = localStorage.getItem("admin_portal_email");
-      if (savedEmail) {
-        currentAdminEmail = savedEmail;
-      }
-      
       loadData();
     };
 
@@ -165,12 +136,7 @@
 
     async function loadData() {
       try {
-        let fetchUrl = APPS_SCRIPT_URL;
-        if (currentAdminEmail) {
-          fetchUrl += `?email=${encodeURIComponent(currentAdminEmail)}`;
-        }
-
-        const res = await fetch(fetchUrl);
+        const res = await fetch(APPS_SCRIPT_URL);
         const data = await res.json();
 
         fullRows = data.rows || [];
@@ -181,15 +147,11 @@
         document.getElementById("loadingBox").classList.add("hidden");
         document.getElementById("teamViewSection").classList.remove("hidden");
 
-        if (data.isAdmin === true) {
-          setupAdminHeader(currentAdminEmail);
-        }
-
         applyFilters();
       } catch (err) {
         console.error("Data Load Error:", err);
         document.getElementById("loadingBox").innerHTML = `
-          <p class="text-xs font-bold text-rose-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Data loading failed. Check Apps Script URL or sheet permissions.</p>
+          <p class="text-xs font-bold text-rose-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Data loading failed. Please re-check Apps Script URL.</p>
         `;
       }
     }
@@ -203,62 +165,6 @@
         opt.innerText = item;
         select.appendChild(opt);
       });
-    }
-
-    function openAdminAuthModal() {
-      if (currentAdminEmail) {
-        window.location.href = "admin.html";
-        return;
-      }
-      document.getElementById("adminAuthModal").classList.remove("hidden");
-    }
-
-    function closeAdminModal() {
-      document.getElementById("adminAuthModal").classList.add("hidden");
-      document.getElementById("authErrorMsg").classList.add("hidden");
-    }
-
-    async function verifyAdminAccess() {
-      const email = document.getElementById("adminEmailInput").value.trim().toLowerCase();
-      const errBox = document.getElementById("authErrorMsg");
-      errBox.classList.add("hidden");
-
-      if (!email || !email.includes("@")) {
-        errBox.innerText = "Enter a valid email address.";
-        errBox.classList.remove("hidden");
-        return;
-      }
-
-      try {
-        const res = await fetch(`APPSSCRIPTURL?email={encodeURIComponent(email)}`);
-        const data = await res.json();
-
-        if (data.isAdmin === true) {
-          currentAdminEmail = email;
-          localStorage.setItem("admin_portal_email", email);
-          setupAdminHeader(email);
-          closeAdminModal();
-          window.location.href = "admin.html";
-        } else {
-          errBox.innerText = "⛔ Access Denied: Email not registered as ADMIN in Sheet!";
-          errBox.classList.remove("hidden");
-        }
-      } catch (err) {
-        errBox.innerText = "Authentication error. Try again.";
-        errBox.classList.remove("hidden");
-      }
-    }
-
-    function setupAdminHeader(email) {
-      document.getElementById("userInfoBadge").classList.remove("hidden");
-      document.getElementById("loggedInAdminEmail").innerText = email;
-      document.getElementById("btnLogout").classList.remove("hidden");
-    }
-
-    function logoutAdmin() {
-      localStorage.removeItem("admin_portal_email");
-      currentAdminEmail = "";
-      location.reload();
     }
 
     function debounceFilter() {
@@ -320,7 +226,7 @@
             <td class="px-4 py-2.5 font-semibold text-slate-600 border-r border-slate-200">${r.state || 'General'}</td>
             <td class="px-4 py-2.5 font-mono text-slate-600 border-r border-slate-200">${r.date || '-'}</td>
             <td class="px-4 py-2.5">
-              <span class="inline-block px-2.5 py-0.5 rounded text-[11px] font-bold border statusBadge">{r.remark}</span>
+              <span class="inline-block px-2.5 py-0.5 rounded text-[11px] font-bold border ${statusBadge}">${r.remark || 'Pending'}</span>
             </td>
           </tr>
         `;
@@ -336,8 +242,20 @@
       document.getElementById("dateFilter").value = "";
       applyFilters();
     }
+
+    // --- DATA PRIVACY & CODE PROTECTION SCRIPTS ---
+    // 1. Right Click Block
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // 2. Ctrl+U, F12, DevTools Shortcuts Block
+    document.onkeydown = function(e) {
+      if (e.keyCode == 123) { return false; } // F12 Key
+      if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'i'.charCodeAt(0))) { return false; } // Ctrl+Shift+I
+      if (e.ctrlKey && e.shiftKey && (e.keyCode == 'C'.charCodeAt(0) || e.keyCode == 'c'.charCodeAt(0))) { return false; } // Ctrl+Shift+C
+      if (e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'j'.charCodeAt(0))) { return false; } // Ctrl+Shift+J
+      if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'u'.charCodeAt(0))) { return false; } // Ctrl+U (View Source)
+      if (e.ctrlKey && (e.keyCode == 'S'.charCodeAt(0) || e.keyCode == 's'.charCodeAt(0))) { return false; } // Ctrl+S (Save Webpage)
+    };
   </script>
 </body>
 </html>
-
-
