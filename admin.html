@@ -3,148 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Executive Metrics Dashboard</title>
+  <title>Admin Executive Dashboard - Common RTO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-user-select: none; user-select: none; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-12">
 
+  <!-- ADMIN AUTH MODAL -->
   <div id="adminAuthModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
-      <div class="w-16 h-16 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-black">
+      <div class="w-16 h-16 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl font-black">
         <i class="fa-solid fa-user-shield"></i>
       </div>
       <h2 class="text-xl font-black text-white uppercase tracking-tight">Admin Authentication</h2>
-      <p class="text-xs text-slate-400 mt-1 mb-6">Enter authorized email address to verify admin privileges.</p>
+      <p class="text-xs text-slate-400 mt-1 mb-6">Enter authorized email to access <b>Common RTO</b> Executive Dashboard.</p>
       
-      <input type="email" id="adminEmailInput" placeholder="Enter your Admin Email ID..." class="w-full bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-xl p-3 mb-4 focus:outline-none focus:border-amber-500">
+      <input type="email" id="adminEmailInput" placeholder="Enter your Admin Email ID..." class="w-full bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-xl p-3.5 mb-4 focus:outline-none focus:border-amber-500">
 
-      <button onclick="authenticateAdmin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-3 px-4 rounded-xl text-xs uppercase tracking-wider transition shadow-lg">
-        Verify & Access Dashboard
+      <button onclick="authenticateAdmin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-3.5 px-4 rounded-xl text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2">
+        <i class="fa-solid fa-key"></i> Verify & Access Dashboard
       </button>
 
       <p id="authErrorMsg" class="text-xs font-bold text-rose-500 mt-4 hidden"></p>
     </div>
   </div>
 
+  <!-- ADMIN DASHBOARD CONTENT -->
   <div id="adminContent" class="hidden">
     
-    <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-40 backdrop-blur-md">
-      <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+    <header class="border-b border-slate-800 bg-slate-900/90 sticky top-0 z-40 backdrop-blur-md">
+      <div class="max-w-[1700px] mx-auto px-6 py-4 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center text-slate-950 font-black text-xl">
+          <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20">
             <i class="fa-solid fa-chart-pie"></i>
           </div>
           <div>
-            <h1 class="text-lg font-black tracking-wide text-white">ADMIN EXECUTIVE METRICS</h1>
-            <p id="loggedInUserText" class="text-[11px] text-amber-400 font-semibold">User: Authenticated Admin</p>
+            <div class="flex items-center gap-2">
+              <h1 class="text-lg font-black tracking-wide text-white">COMMON RTO DASHBOARD</h1>
+              <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">EXECUTIVE METRICS</span>
+            </div>
+            <p id="loggedInUserText" class="text-[11px] text-slate-400 font-semibold">User: Authorized Admin</p>
           </div>
         </div>
 
         <div class="flex items-center gap-4">
-          <div class="bg-slate-800 p-1 rounded-xl flex border border-slate-700">
-            <button onclick="setTimeframe('DAY')" id="btn-DAY" class="tf-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-300">Today</button>
-            <button onclick="setTimeframe('WEEK')" id="btn-WEEK" class="tf-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-300">This Week</button>
-            <button onclick="setTimeframe('MONTH')" id="btn-MONTH" class="tf-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-300">This Month</button>
-            <button onclick="setTimeframe('YEAR')" id="btn-YEAR" class="tf-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-300">This Year</button>
-            <button onclick="setTimeframe('ALL')" id="btn-ALL" class="tf-btn px-4 py-1.5 rounded-lg text-xs font-bold transition bg-amber-500 text-slate-950">All Time</button>
+          <div class="bg-slate-800/80 p-1 rounded-xl flex border border-slate-700">
+            <button onclick="setTimeframe('DAY')" id="btn-DAY" class="tf-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-400">Today</button>
+            <button onclick="setTimeframe('WEEK')" id="btn-WEEK" class="tf-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-400">This Week</button>
+            <button onclick="setTimeframe('MONTH')" id="btn-MONTH" class="tf-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-400">This Month</button>
+            <button onclick="setTimeframe('YEAR')" id="btn-YEAR" class="tf-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-400">This Year</button>
+            <button onclick="setTimeframe('ALL')" id="btn-ALL" class="tf-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-amber-500 text-slate-950">All Time</button>
           </div>
-          <button onclick="logoutAdmin()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs uppercase">Logout</button>
+          <button onclick="logoutAdmin()" class="bg-rose-600/20 border border-rose-500/30 text-rose-400 hover:bg-rose-600 hover:text-white font-bold px-3.5 py-1.5 rounded-xl text-xs uppercase transition">Logout</button>
         </div>
       </div>
     </header>
 
-    <main class="max-w-[1600px] mx-auto px-6 mt-6 space-y-6">
+    <main class="max-w-[1700px] mx-auto px-6 mt-6 space-y-6">
 
-      <div onclick="openBestPerformerModal()" class="cursor-pointer bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 p-6 rounded-2xl shadow-xl flex items-center justify-between hover:scale-[1.01] transition-transform">
+      <!-- LEADERBOARD BANNER -->
+      <div onclick="openBestPerformerModal()" class="cursor-pointer bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 p-5 rounded-2xl shadow-xl flex items-center justify-between hover:scale-[1.005] transition-transform">
         <div class="flex items-center gap-4 text-slate-950">
-          <div class="w-14 h-14 bg-slate-950/20 backdrop-blur-sm rounded-full flex items-center justify-center text-3xl">
+          <div class="w-12 h-12 bg-slate-950/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-2xl">
             🏆
           </div>
           <div>
-            <h2 class="text-xl font-black uppercase tracking-tight text-slate-950">Best Performer Dashboard</h2>
-            <p class="text-xs font-bold text-slate-900 opacity-90">Click here to reveal Day, Week, Month & Year top performers!</p>
+            <h2 class="text-base font-black uppercase tracking-tight text-slate-950">Common RTO Top Performers</h2>
+            <p class="text-xs font-bold text-slate-900 opacity-90">Click here to reveal Day, Week, Month & Year top performers for Common RTO!</p>
           </div>
         </div>
-        <div class="bg-slate-950 text-amber-400 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow">
+        <div class="bg-slate-950 text-amber-400 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider shadow">
           View Winners <i class="fa-solid fa-arrow-right ml-1"></i>
         </div>
       </div>
 
+      <!-- METRIC CARDS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg relative overflow-hidden">
           <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase">
             <span>Total Received</span>
-            <i class="fa-solid fa-folder-open text-amber-400"></i>
+            <i class="fa-solid fa-folder-open text-amber-400 text-lg"></i>
           </div>
           <p id="mTotal" class="text-4xl font-black text-white mt-3">0</p>
-          <p class="text-[11px] text-slate-400 mt-2 font-medium">Cases in selected period</p>
+          <p class="text-[11px] text-slate-400 mt-2 font-medium">Common RTO Total Cases</p>
         </div>
 
-        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg relative overflow-hidden">
           <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase">
             <span>Certificate Issued</span>
-            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+            <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
           </div>
           <p id="mIssued" class="text-4xl font-black text-emerald-400 mt-3">0</p>
           <p id="mIssuedRate" class="text-[11px] text-emerald-400 mt-2 font-bold">0% Conversion</p>
         </div>
 
-        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg relative overflow-hidden">
           <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase">
             <span>Pending Cases</span>
-            <i class="fa-solid fa-clock text-amber-400"></i>
+            <i class="fa-solid fa-clock text-amber-400 text-lg"></i>
           </div>
           <p id="mPending" class="text-4xl font-black text-amber-400 mt-3">0</p>
-          <p class="text-[11px] text-slate-400 mt-2 font-medium">Awaiting processing</p>
+          <p class="text-[11px] text-slate-400 mt-2 font-medium">Awaiting Processing</p>
         </div>
 
-        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/60 shadow-lg">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg relative overflow-hidden">
           <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase">
             <span>Action Required</span>
-            <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+            <i class="fa-solid fa-triangle-exclamation text-rose-400 text-lg"></i>
           </div>
           <p id="mAction" class="text-4xl font-black text-rose-400 mt-3">0</p>
           <p class="text-[11px] text-rose-400 mt-2 font-bold">Needs Immediate Attention</p>
         </div>
       </div>
 
+      <!-- CHARTS -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-lg">
-          <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Volume Trend Analysis</h3>
-          <div class="h-[300px]">
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Common RTO Volume Trend Analysis</h3>
+          <div class="h-[280px]">
             <canvas id="trendChart"></canvas>
           </div>
         </div>
 
-        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-lg">
-          <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Status Distribution Matrix</h3>
-          <div class="h-[300px] flex items-center justify-center">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Status Distribution Matrix</h3>
+          <div class="h-[280px] flex items-center justify-center">
             <canvas id="statusChart"></canvas>
           </div>
         </div>
       </div>
 
-      <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-lg">
-        <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">State-Wise Metrics Breakdown</h3>
-        <div id="stateCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- EMPLOYEE MATRIX -->
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Common RTO Employee Performance Matrix</h3>
         </div>
-      </div>
-
-      <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-lg">
-        <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Employee Performance Matrix</h3>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+              <tr class="bg-slate-950 text-slate-400 text-xs uppercase font-bold border-b border-slate-800">
                 <th class="p-3">Employee Name</th>
-                <th class="p-3">Assigned State</th>
+                <th class="p-3">Assigned State/Project</th>
                 <th class="p-3 text-center">Total Cases</th>
                 <th class="p-3 text-center">Issued</th>
                 <th class="p-3 text-center">Pending</th>
@@ -161,52 +166,49 @@
 
   </div>
 
+  <!-- BEST PERFORMER MODAL -->
   <div id="bestPerformerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-6">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-6">
       
       <div class="flex justify-between items-center border-b border-slate-800 pb-4">
         <div class="flex items-center gap-3">
-          <span class="text-3xl">🎉</span>
+          <span class="text-2xl">🎉</span>
           <div>
-            <h3 class="text-lg font-black text-white uppercase tracking-wider">Best Performer Awards</h3>
-            <p class="text-xs text-amber-400 font-semibold">Top State & Employee Leaderboard</p>
+            <h3 class="text-base font-black text-white uppercase tracking-wider">Common RTO Best Performers</h3>
+            <p class="text-xs text-amber-400 font-semibold">Top Employee Performance</p>
           </div>
         </div>
-        <button onclick="closeBestPerformerModal()" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+        <button onclick="closeBestPerformerModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div id="bpCard-DAY" class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl">
-          <p class="text-xs font-black text-amber-400 uppercase tracking-wider">Today (Day)</p>
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+          <p class="text-[11px] font-black text-amber-400 uppercase tracking-wider">Today (Day)</p>
           <div class="mt-2 text-xs space-y-1">
-            <p class="text-slate-300">Top State: <span id="bpState-DAY" class="font-bold text-white">-</span></p>
             <p class="text-slate-300">Top Employee: <span id="bpEmp-DAY" class="font-bold text-white">-</span></p>
             <p class="text-emerald-400 font-bold" id="bpScore-DAY">Score: 0%</p>
           </div>
         </div>
 
-        <div id="bpCard-WEEK" class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl">
-          <p class="text-xs font-black text-amber-400 uppercase tracking-wider">This Week</p>
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+          <p class="text-[11px] font-black text-amber-400 uppercase tracking-wider">This Week</p>
           <div class="mt-2 text-xs space-y-1">
-            <p class="text-slate-300">Top State: <span id="bpState-WEEK" class="font-bold text-white">-</span></p>
             <p class="text-slate-300">Top Employee: <span id="bpEmp-WEEK" class="font-bold text-white">-</span></p>
             <p class="text-emerald-400 font-bold" id="bpScore-WEEK">Score: 0%</p>
           </div>
         </div>
 
-        <div id="bpCard-MONTH" class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl">
-          <p class="text-xs font-black text-amber-400 uppercase tracking-wider">This Month</p>
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+          <p class="text-[11px] font-black text-amber-400 uppercase tracking-wider">This Month</p>
           <div class="mt-2 text-xs space-y-1">
-            <p class="text-slate-300">Top State: <span id="bpState-MONTH" class="font-bold text-white">-</span></p>
             <p class="text-slate-300">Top Employee: <span id="bpEmp-MONTH" class="font-bold text-white">-</span></p>
             <p class="text-emerald-400 font-bold" id="bpScore-MONTH">Score: 0%</p>
           </div>
         </div>
 
-        <div id="bpCard-YEAR" class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl">
-          <p class="text-xs font-black text-amber-400 uppercase tracking-wider">This Year</p>
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+          <p class="text-[11px] font-black text-amber-400 uppercase tracking-wider">This Year</p>
           <div class="mt-2 text-xs space-y-1">
-            <p class="text-slate-300">Top State: <span id="bpState-YEAR" class="font-bold text-white">-</span></p>
             <p class="text-slate-300">Top Employee: <span id="bpEmp-YEAR" class="font-bold text-white">-</span></p>
             <p class="text-emerald-400 font-bold" id="bpScore-YEAR">Score: 0%</p>
           </div>
@@ -221,8 +223,8 @@
   </div>
 
   <script>
-    // ⚠️ PASTE YOUR DEPLOYED WEB APP URL HERE
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyM_q9VK_0WVSPkbGrbdApu75nENhSUGeWgLK46jTvZn5fWzq418wLu3eUdprvrbyUw/exec";
+    // ⚠️ PASTE YOUR GOOGLE APPS SCRIPT WEB APP DEPLOYMENT URL HERE
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-lPVgUUCaz1EKZG_U5mQGnP8lFeg_cf8zYc6QChrF-xAEjTwOGNoOhHKHKnHKnmXd/exec";
 
     const NEED_ACTION_CONDITIONS = [
       "top-up done", "top-up pending", "check not clear", 
@@ -235,6 +237,16 @@
     let trendChartInstance = null;
     let statusChartInstance = null;
     let currentUserEmail = "";
+
+    // SECURITY: DISABLE RIGHT CLICK & SOURCE INSPECTION KEYS
+    document.addEventListener("contextmenu", (e) => e.preventDefault());
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "F12" || 
+         (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) || 
+         (e.ctrlKey && (e.key === "u" || e.key === "U"))) {
+        e.preventDefault();
+      }
+    });
 
     window.onload = function() {
       const savedEmail = localStorage.getItem("admin_portal_email");
@@ -250,7 +262,7 @@
       errBox.classList.add("hidden");
 
       if (!emailInput || !emailInput.includes("@")) {
-        errBox.innerText = "Please enter a valid Gmail / Work Email address!";
+        errBox.innerText = "Please enter a valid Admin Email address!";
         errBox.classList.remove("hidden");
         return;
       }
@@ -267,16 +279,21 @@
           document.getElementById("adminContent").classList.remove("hidden");
           document.getElementById("loggedInUserText").innerText = `Admin: ${currentUserEmail}`;
 
-          fullRows = data.rows || [];
+          // FILTER ONLY FOR 'COMMON RTO' FOR ADMIN DASHBOARD
+          const allData = data.rows || [];
+          fullRows = allData.filter(r => {
+            const prj = (r.state || "").toString().trim().toUpperCase();
+            return prj === "COMMON RTO" || prj.includes("COMMON RTO");
+          });
+
           employeeMap = data.employeeMap || [];
           updateDashboard();
         } else {
-          errBox.innerText = "⛔ ACCESS DENIED: Your Email is NOT authorized as ADMIN in Sheet!";
+          errBox.innerText = "⛔ ACCESS DENIED: Your Email is NOT authorized as ADMIN!";
           errBox.classList.remove("hidden");
         }
-
       } catch (err) {
-        errBox.innerText = "Server Auth Error: Please re-check Apps Script URL.";
+        errBox.innerText = "Server Error: Could not connect to Apps Script URL.";
         errBox.classList.remove("hidden");
       }
     }
@@ -290,12 +307,10 @@
       currentTimeframe = tf;
       document.querySelectorAll('.tf-btn').forEach(b => {
         b.classList.remove('bg-amber-500', 'text-slate-950');
-        b.classList.add('text-slate-300');
+        b.classList.add('text-slate-400');
       });
       const activeBtn = document.getElementById(`btn-${tf}`);
-      if (activeBtn) {
-        activeBtn.classList.add('bg-amber-500', 'text-slate-950');
-      }
+      if (activeBtn) activeBtn.classList.add('bg-amber-500', 'text-slate-950');
       
       updateDashboard();
     }
@@ -306,7 +321,7 @@
       const now = new Date();
       return fullRows.filter(row => {
         if (!row.date) return true;
-        const rowDate = new Date(row.date);
+        const rowDate = new Date(row.date + "T00:00:00");
         if (isNaN(rowDate)) return true;
 
         if (tf === "DAY") {
@@ -349,7 +364,6 @@
       document.getElementById("mIssuedRate").innerText = `${rate}% Success Rate`;
 
       renderCharts(filtered, issued, pending, action);
-      renderStateWiseCards(filtered);
       renderEmployeePerformance(filtered);
     }
 
@@ -396,56 +410,10 @@
           maintainAspectRatio: false,
           scales: {
             x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
+            y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
           },
           plugins: { legend: { display: false } }
         }
-      });
-    }
-
-    function renderStateWiseCards(rows) {
-      const stateMap = {};
-      rows.forEach(r => {
-        const st = r.state || "General";
-        if (!stateMap[st]) stateMap[st] = { total: 0, issued: 0, pending: 0 };
-        stateMap[st].total++;
-
-        const rem = (r.remark || "").toLowerCase().trim();
-        const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
-        if (isIssued) stateMap[st].issued++;
-        else stateMap[st].pending++;
-      });
-
-      const container = document.getElementById("stateCardsContainer");
-      container.innerHTML = "";
-
-      Object.keys(stateMap).forEach(st => {
-        const data = stateMap[st];
-        const pct = data.total > 0 ? Math.round((data.issued / data.total) * 100) : 0;
-        
-        const card = document.createElement("div");
-        card.className = "bg-slate-900 border border-slate-700/80 p-4 rounded-xl shadow-sm";
-        card.innerHTML = `
-          <div class="flex justify-between items-center mb-2">
-            <span class="font-bold text-amber-400 text-sm">${st}</span>
-            <span class="bg-amber-500/10 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded border border-amber-500/20">${pct}% Done</span>
-          </div>
-          <div class="grid grid-cols-3 gap-2 text-center text-xs mt-3">
-            <div class="bg-slate-800 p-2 rounded">
-              <p class="text-slate-400 text-[10px]">Total</p>
-              <p class="font-bold text-white mt-0.5">${data.total}</p>
-            </div>
-            <div class="bg-slate-800 p-2 rounded">
-              <p class="text-emerald-400 text-[10px]">Issued</p>
-              <p class="font-bold text-emerald-400 mt-0.5">${data.issued}</p>
-            </div>
-            <div class="bg-slate-800 p-2 rounded">
-              <p class="text-amber-400 text-[10px]">Pending</p>
-              <p class="font-bold text-amber-400 mt-0.5">${data.pending}</p>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
       });
     }
 
@@ -454,42 +422,29 @@
       tbody.innerHTML = "";
 
       if (!employeeMap || employeeMap.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-medium">No employee mapping added in Employee_Mapping Tab.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-medium">No employee mapping found.</td></tr>`;
         return;
       }
 
       employeeMap.forEach(empObj => {
         const empName = empObj.name;
-        const assignedStr = empObj.assignedStr;
-        const statesList = empObj.statesList || [];
+        const assignedStr = empObj.assignedStr || "Common RTO";
 
-        let empTotal = 0;
+        let empTotal = rows.length;
         let empIssued = 0;
         let empPending = 0;
 
         rows.forEach(r => {
-          const rowProject = (r.state || "").toString().toUpperCase().replace(/\s+/g, '');
-          if (!rowProject) return;
-
-          const isMatched = statesList.some(st => {
-            const code = st.toUpperCase().replace(/\s+/g, '');
-            if (!code) return false;
-            return rowProject === code || rowProject.includes(code) || code.includes(rowProject);
-          });
-
-          if (isMatched) {
-            empTotal++;
-            const rem = (r.remark || "").toString().toLowerCase().trim();
-            const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
-            if (isIssued) empIssued++;
-            else empPending++;
-          }
+          const rem = (r.remark || "").toString().toLowerCase().trim();
+          const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
+          if (isIssued) empIssued++;
+          else empPending++;
         });
 
         const conversion = empTotal > 0 ? Math.round((empIssued / empTotal) * 100) : 0;
 
         const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-800/50 transition border-b border-slate-800";
+        tr.className = "hover:bg-slate-800/40 transition border-b border-slate-800";
         tr.innerHTML = `
           <td class="p-3 font-bold text-white">${empName}</td>
           <td class="p-3 text-amber-400 font-semibold">${assignedStr}</td>
@@ -505,63 +460,26 @@
     }
 
     function openBestPerformerModal() {
-      const timeframes = ["DAY", "WEEK", "MONTH", "YEAR"];
-
-      timeframes.forEach(tf => {
+      ["DAY", "WEEK", "MONTH", "YEAR"].forEach(tf => {
         const rows = getFilteredRowsByTimeframe(tf);
-        const stateMap = {};
-
-        rows.forEach(r => {
-          const st = r.state || "General";
-          if (!stateMap[st]) stateMap[st] = { total: 0, issued: 0 };
-          stateMap[st].total++;
-
-          const rem = (r.remark || "").toLowerCase().trim();
-          const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
-          if (isIssued) stateMap[st].issued++;
-        });
-
-        let bestState = "-";
-        let bestPct = -1;
-
-        Object.keys(stateMap).forEach(st => {
-          const t = stateMap[st].total;
-          const i = stateMap[st].issued;
-          const pct = t > 0 ? Math.round((i / t) * 100) : 0;
-          if (pct > bestPct && t > 0) {
-            bestPct = pct;
-            bestState = st;
-          }
-        });
-
         let bestEmp = "-";
-        if (bestState !== "-" && employeeMap && employeeMap.length > 0) {
-          const matchedEmps = [];
-          employeeMap.forEach(eObj => {
-            const statesList = eObj.statesList || [];
-            const isMatch = statesList.some(st => {
-              const code = st.toUpperCase().replace(/\s+/g, '');
-              const targetState = bestState.toUpperCase().replace(/\s+/g, '');
-              return targetState === code || targetState.includes(code) || code.includes(targetState);
-            });
-            if (isMatch) matchedEmps.push(eObj.name);
-          });
+        let bestPct = 0;
 
-          if (matchedEmps.length > 0) {
-            bestEmp = matchedEmps.join(", ");
-          }
+        if (rows.length > 0 && employeeMap.length > 0) {
+          bestEmp = employeeMap[0].name;
+          let issued = rows.filter(r => {
+            const rem = (r.remark || "").toLowerCase().trim();
+            return rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
+          }).length;
+          bestPct = Math.round((issued / rows.length) * 100);
         }
 
-        document.getElementById(`bpState-${tf}`).innerText = bestState;
         document.getElementById(`bpEmp-${tf}`).innerText = bestEmp;
-        document.getElementById(`bpScore-${tf}`).innerText = bestPct >= 0 ? `Score: ${bestPct}% Conversion` : "Score: N/A";
+        document.getElementById(`bpScore-${tf}`).innerText = `Score: ${bestPct}% Conversion`;
       });
 
       document.getElementById("bestPerformerModal").classList.remove("hidden");
-
-      if (typeof confetti === 'function') {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      }
+      if (typeof confetti === 'function') confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
     }
 
     function closeBestPerformerModal() {
