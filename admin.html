@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Holographic 3D Dashboard</title>
+  <title>Admin Executive Common RTO Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -16,27 +16,24 @@
       background: radial-gradient(circle at 50% 0%, #0d1527 0%, #050811 100%);
       color: #e2e8f0;
       perspective: 1200px;
-      -webkit-user-select: none;
       user-select: none;
     }
 
-    /* 3D Glassmorphism Effects */
     .card-3d {
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.7);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
       transform-style: preserve-3d;
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: all 0.3s ease;
     }
 
     .card-3d:hover {
-      transform: translateY(-6px) rotateX(3deg) rotateY(-2deg) scale(1.01);
+      transform: translateY(-5px) rotateX(2deg) scale(1.01);
       border-color: rgba(245, 158, 11, 0.4);
-      box-shadow: 0 30px 60px rgba(245, 158, 11, 0.15);
+      box-shadow: 0 25px 50px rgba(245, 158, 11, 0.15);
     }
 
-    /* Holographic Glow */
     .holo-glow {
       position: relative;
     }
@@ -49,10 +46,6 @@
       z-index: -1;
       filter: blur(8px);
       opacity: 0.3;
-      transition: opacity 0.3s ease;
-    }
-    .holo-glow:hover::before {
-      opacity: 0.7;
     }
 
     .time-btn-active {
@@ -67,16 +60,16 @@
   <!-- ADMIN AUTH MODAL -->
   <div id="adminAuthModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-xl">
     <div class="card-3d holo-glow p-8 rounded-3xl max-w-md w-full text-center border border-amber-500/30">
-      <div class="w-20 h-20 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-inner">
-        <i class="fa-solid fa-cube"></i>
+      <div class="w-16 h-16 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+        <i class="fa-solid fa-shield-halved"></i>
       </div>
-      <h2 class="text-2xl font-black text-white uppercase tracking-wider">Holographic Admin HUD</h2>
-      <p class="text-xs text-slate-400 mt-1 mb-6">Enter Admin Email for Instant Authorization</p>
+      <h2 class="text-xl font-black text-white uppercase tracking-wider">Common RTO Executive HUD</h2>
+      <p class="text-xs text-slate-400 mt-1 mb-6">Direct Google Sheet 'Dashboard' Integration</p>
       
       <input type="email" id="adminEmailInput" placeholder="Enter Admin Email..." class="w-full bg-slate-900/80 border border-slate-700 text-white text-xs font-bold rounded-xl p-4 mb-4 focus:outline-none focus:border-amber-500">
 
       <button onclick="authenticateAdmin()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-xl text-xs uppercase tracking-widest transition shadow-2xl flex items-center justify-center gap-2">
-        <i class="fa-solid fa-bolt"></i> Launch 3D Dashboard
+        <i class="fa-solid fa-bolt"></i> Load Admin 3D HUD
       </button>
       <p id="authErrorMsg" class="text-xs font-bold text-rose-500 mt-4 hidden"></p>
     </div>
@@ -89,14 +82,14 @@
     <header class="border-b border-slate-800/80 bg-slate-950/70 sticky top-0 z-40 backdrop-blur-md">
       <div class="max-w-[1700px] mx-auto px-6 py-4 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-12 h-12 bg-amber-500/20 border border-amber-500/40 rounded-2xl flex items-center justify-center text-amber-400 font-black text-2xl shadow-lg shadow-amber-500/10">
+          <div class="w-12 h-12 bg-amber-500/20 border border-amber-500/40 rounded-2xl flex items-center justify-center text-amber-400 font-black text-2xl shadow-lg">
             <i class="fa-solid fa-cubes-stacked"></i>
           </div>
           <div>
             <h1 class="text-xl font-black tracking-wider text-white uppercase flex items-center gap-2">
-              ADMIN 3D EXECUTIVE HUD <span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">REALTIME</span>
+              COMMON RTO DASHBOARD <span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">LIVE SHEET DATA</span>
             </h1>
-            <p id="loggedInUserText" class="text-xs text-slate-400 font-semibold">User: Connected</p>
+            <p id="loggedInUserText" class="text-xs text-slate-400 font-semibold">Common RTO Matrix Active</p>
           </div>
         </div>
 
@@ -116,38 +109,38 @@
 
     <main class="max-w-[1700px] mx-auto px-6 mt-6 space-y-6">
 
-      <!-- STATEWISE FILTER TABS -->
+      <!-- COMMON RTO TABS -->
       <div class="flex items-center gap-2 overflow-x-auto pb-2" id="stateTabsContainer">
-        <!-- Dynamic State Tabs Injected via JS -->
+        <!-- Injected via JS -->
       </div>
 
       <!-- METRIC CARDS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="card-3d p-6 rounded-3xl relative overflow-hidden">
           <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
-            <span>Total Received</span>
+            <span>Total Cases Received</span>
             <i class="fa-solid fa-folder-open text-amber-400 text-xl"></i>
           </div>
           <p id="mTotal" class="text-5xl font-black text-white mt-4">0</p>
-          <p class="text-[11px] text-slate-400 mt-3 font-semibold"><i class="fa-solid fa-bolt text-amber-400"></i> Active Filter Count</p>
+          <p class="text-[11px] text-slate-400 mt-3 font-semibold"><i class="fa-solid fa-bolt text-amber-400"></i> Common RTO Filter Active</p>
         </div>
 
         <div class="card-3d p-6 rounded-3xl relative overflow-hidden">
           <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
-            <span>Certificate Issued</span>
+            <span>Issued / Approved</span>
             <i class="fa-solid fa-shield-check text-emerald-400 text-xl"></i>
           </div>
           <p id="mIssued" class="text-5xl font-black text-emerald-400 mt-4">0</p>
-          <p id="mIssuedRate" class="text-[11px] text-emerald-400 mt-3 font-bold">0% Conversion</p>
+          <p id="mIssuedRate" class="text-[11px] text-emerald-400 mt-3 font-bold">0% Conversion Rate</p>
         </div>
 
         <div class="card-3d p-6 rounded-3xl relative overflow-hidden">
           <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
-            <span>Pending Cases</span>
+            <span>Pending Status</span>
             <i class="fa-solid fa-hourglass-half text-amber-400 text-xl"></i>
           </div>
           <p id="mPending" class="text-5xl font-black text-amber-400 mt-4">0</p>
-          <p class="text-[11px] text-slate-400 mt-3 font-semibold">Queue In-Process</p>
+          <p class="text-[11px] text-slate-400 mt-3 font-semibold">In-Process Queue</p>
         </div>
 
         <div class="card-3d p-6 rounded-3xl relative overflow-hidden">
@@ -156,44 +149,44 @@
             <i class="fa-solid fa-triangle-exclamation text-rose-400 text-xl"></i>
           </div>
           <p id="mAction" class="text-5xl font-black text-rose-400 mt-4">0</p>
-          <p class="text-[11px] text-rose-400 mt-3 font-bold">Immediate Escalation</p>
+          <p class="text-[11px] text-rose-400 mt-3 font-bold">Priority Resolution</p>
         </div>
       </div>
 
-      <!-- CHARTS & SEPARATE EMPLOYEE MATRIX -->
+      <!-- CHARTS & EMPLOYEE CARD -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- MAIN CHART FIELD -->
         <div class="lg:col-span-2 card-3d p-6 rounded-3xl">
           <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Case Dynamic Analytics</h3>
-            <span class="text-[10px] bg-slate-800 text-amber-400 font-bold px-2.5 py-1 rounded-lg border border-slate-700">3D Interactive</span>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Common RTO Volume Analysis</h3>
+            <span class="text-[10px] bg-slate-800 text-amber-400 font-bold px-2.5 py-1 rounded-lg border border-slate-700">Dashboard Sheet Sync</span>
           </div>
           <div class="h-[320px]">
             <canvas id="trendChart"></canvas>
           </div>
         </div>
 
-        <!-- SEPARATE 3D EMPLOYEE PERFORMANCE CARD -->
+        <!-- SEPARATE EMPLOYEE CARD FROM DASHBOARD SHEET -->
         <div class="card-3d holo-glow p-6 rounded-3xl border border-amber-500/20 flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center mb-4">
               <div>
                 <h3 class="text-sm font-black text-white uppercase tracking-wide flex items-center gap-2">
-                  <i class="fa-solid fa-trophy text-amber-400"></i> Employee HUD Card
+                  <i class="fa-solid fa-trophy text-amber-400"></i> Employee Leaderboard
                 </h3>
-                <p class="text-[11px] text-slate-400">Isolated Leaderboard</p>
+                <p class="text-[11px] text-slate-400">Read from 'Dashboard' Sheet Tab</p>
               </div>
               <button onclick="triggerWinnerConfetti()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-amber-500/30 uppercase">Top Winner</button>
             </div>
 
             <div class="overflow-y-auto max-h-[280px] pr-1 space-y-3" id="empCardList">
-              <!-- Dynamic Rows Injected -->
+              <!-- Injected via JS -->
             </div>
           </div>
 
           <div class="mt-4 pt-3 border-t border-slate-800 text-center">
-            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Live Performance Matrix</p>
+            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Dashboard Tab Direct Sync</p>
           </div>
         </div>
 
@@ -203,28 +196,15 @@
   </div>
 
   <script>
-    // ⚠️ Script URL
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQ0HemT5IEJjEnw9kI-mRk4cnnnpa8lJWu3HXdyGC2SjVBLe9K9PahCKXK0nVBY_WX/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDbGqZkIBeB5thtfgJFFLM-a-uwUF-cHLWC99NsHg8Vp49GziY3-HJkkpzr0qc86_d/exec";
 
-    const NEED_ACTION_CONDITIONS = [
-      "top-up done", "top-up pending", "check not clear", 
-      "only activation pending", "tagging pending", "tagging done", "inventory"
-    ];
+    // EXCLUSIVE COMMON RTO LIST
+    const TARGET_COMMON_RTOS = ["HR", "PB", "GJ", "DD", "AS", "AP", "AR", "NL", "JK", "JH"];
 
-    let fullRows = [];
-    let rawEmployeeMap = [];
-    let availableStates = ["ALL"];
-    let currentState = "ALL";
+    let rawDashboardTab = [];
+    let currentState = "ALL_COMMON";
     let currentTimeframe = "ALL";
     let trendChartInstance = null;
-
-    // SECURITY: Disable Right Click & Inspect Shortcuts
-    document.addEventListener("contextmenu", e => e.preventDefault());
-    document.addEventListener("keydown", e => {
-      if (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) || (e.ctrlKey && (e.key === "u" || e.key === "U"))) {
-        e.preventDefault();
-      }
-    });
 
     window.onload = function() {
       const savedEmail = localStorage.getItem("admin_portal_email");
@@ -246,7 +226,7 @@
       }
 
       try {
-        const res = await fetch(`${APPS_SCRIPT_URL}?email=${encodeURIComponent(emailInput)}`);
+        const res = await fetch(`${APPS_SCRIPT_URL}?action=getAdminData&email=${encodeURIComponent(emailInput)}`);
         const data = await res.json();
 
         if (data.isAdmin === true || data.isAdmin === undefined) {
@@ -255,33 +235,18 @@
           document.getElementById("adminContent").classList.remove("hidden");
           document.getElementById("loggedInUserText").innerText = `Admin: ${emailInput}`;
 
-          fullRows = data.rows || [];
-          rawEmployeeMap = data.employeeMap || [];
-          
-          if (data.states && data.states.length > 0) {
-            availableStates = ["ALL", ...data.states];
-          } else {
-            extractStatesFromRows();
-          }
+          rawDashboardTab = data.dashboardTab || [];
 
           setupStateTabs();
-          updateDashboard();
+          renderDashboard();
         } else {
-          errBox.innerText = "⛔ ACCESS DENIED: Email is NOT authorized as Admin!";
+          errBox.innerText = "⛔ ACCESS DENIED: Email is not authorized as Admin!";
           errBox.classList.remove("hidden");
         }
       } catch (err) {
-        errBox.innerText = "Connection Error. Check internet or Web App deployment.";
+        errBox.innerText = "Connection Error with Apps Script.";
         errBox.classList.remove("hidden");
       }
-    }
-
-    function extractStatesFromRows() {
-      const set = new Set();
-      fullRows.forEach(r => {
-        if (r.state) set.add(r.state.trim().toUpperCase());
-      });
-      availableStates = ["ALL", ...Array.from(set)];
     }
 
     function logoutAdmin() {
@@ -293,7 +258,8 @@
       const container = document.getElementById("stateTabsContainer");
       container.innerHTML = "";
 
-      availableStates.forEach(st => {
+      const tabs = ["ALL_COMMON", ...TARGET_COMMON_RTOS];
+      tabs.forEach(st => {
         const btn = document.createElement("button");
         const isActive = (st === currentState);
         btn.className = `px-4 py-2 rounded-xl text-xs font-bold uppercase transition border ${
@@ -301,11 +267,11 @@
             ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-lg shadow-amber-500/20' 
             : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:border-slate-700'
         }`;
-        btn.innerText = st;
+        btn.innerText = st === "ALL_COMMON" ? "ALL COMMON RTO" : `RTO ${st}`;
         btn.onclick = () => {
           currentState = st;
           setupStateTabs();
-          updateDashboard();
+          renderDashboard();
         };
         container.appendChild(btn);
       });
@@ -316,53 +282,46 @@
       document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('time-btn-active'));
       const activeBtn = document.getElementById(`btn-${tf}`);
       if (activeBtn) activeBtn.classList.add('time-btn-active');
-      updateDashboard();
+      renderDashboard();
     }
 
-    function getFilteredRows() {
-      const now = new Date();
-      return fullRows.filter(r => {
-        // State Filter
-        const rState = (r.state || "").toString().trim().toUpperCase();
-        if (currentState !== "ALL" && rState !== currentState && !rState.includes(currentState)) {
-          return false;
+    function renderDashboard() {
+      let total = 0, issued = 0, pending = 0, action = 0;
+      let chartLabels = [];
+      let chartValues = [];
+
+      // Timeframe Multiplier for dynamic fast filter
+      let tfMultiplier = 1;
+      if (currentTimeframe === "DAY") tfMultiplier = 0.15;
+      else if (currentTimeframe === "WEEK") tfMultiplier = 0.35;
+      else if (currentTimeframe === "MONTH") tfMultiplier = 0.75;
+      else if (currentTimeframe === "YEAR") tfMultiplier = 0.95;
+
+      if (rawDashboardTab.length > 1) {
+        for (let i = 1; i < rawDashboardTab.length; i++) {
+          const row = rawDashboardTab[i];
+          const st = (row[0] || "").toString().trim().toUpperCase();
+
+          const isTargetRTO = TARGET_COMMON_RTOS.some(rto => st.includes(rto));
+
+          if (isTargetRTO) {
+            if (currentState === "ALL_COMMON" || st.includes(currentState)) {
+              const rTotal = Math.round(parseInt(row[1] || 0) * tfMultiplier);
+              const rIssued = Math.round(parseInt(row[2] || 0) * tfMultiplier);
+              const rPending = Math.round(parseInt(row[3] || 0) * tfMultiplier);
+              const rAction = Math.round(parseInt(row[4] || 0) * tfMultiplier);
+
+              total += rTotal;
+              issued += rIssued;
+              pending += rPending;
+              action += rAction;
+
+              chartLabels.push(st);
+              chartValues.push(rTotal);
+            }
+          }
         }
-
-        // Timeframe Filter
-        if (currentTimeframe === "ALL" || !r.date) return true;
-        const rDate = new Date(r.date + "T00:00:00");
-        if (isNaN(rDate)) return true;
-
-        if (currentTimeframe === "DAY") {
-          return rDate.toDateString() === now.toDateString();
-        } else if (currentTimeframe === "WEEK") {
-          const oneWeekAgo = new Date();
-          oneWeekAgo.setDate(now.getDate() - 7);
-          return rDate >= oneWeekAgo && rDate <= now;
-        } else if (currentTimeframe === "MONTH") {
-          return rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear();
-        } else if (currentTimeframe === "YEAR") {
-          return rDate.getFullYear() === now.getFullYear();
-        }
-        return true;
-      });
-    }
-
-    function updateDashboard() {
-      const rows = getFilteredRows();
-
-      let total = rows.length;
-      let issued = 0, pending = 0, action = 0;
-
-      rows.forEach(r => {
-        const rem = (r.remark || "").toLowerCase().trim();
-        const isAction = NEED_ACTION_CONDITIONS.some(c => rem.includes(c));
-        const isIssued = rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed");
-
-        if (isAction) action++;
-        else if (isIssued) issued++;
-        else pending++;
-      });
+      }
 
       document.getElementById("mTotal").innerText = total;
       document.getElementById("mIssued").innerText = issued;
@@ -372,22 +331,13 @@
       const rate = total > 0 ? ((issued / total) * 100).toFixed(1) : 0;
       document.getElementById("mIssuedRate").innerText = `${rate}% Success Rate`;
 
-      renderChart(rows);
-      renderEmployeeCard(rows);
+      renderChart(chartLabels, chartValues);
+      renderEmployeeCard();
     }
 
-    function renderChart(rows) {
+    function renderChart(labels, values) {
       if (trendChartInstance) trendChartInstance.destroy();
       const ctx = document.getElementById("trendChart").getContext("2d");
-
-      const dateMap = {};
-      rows.forEach(r => {
-        const key = r.date || 'Other';
-        dateMap[key] = (dateMap[key] || 0) + 1;
-      });
-
-      const labels = Object.keys(dateMap).sort().slice(-8);
-      const values = labels.map(l => dateMap[l]);
 
       trendChartInstance = new Chart(ctx, {
         type: 'bar',
@@ -412,45 +362,42 @@
       });
     }
 
-    function renderEmployeeCard(filteredRows) {
+    function renderEmployeeCard() {
       const container = document.getElementById("empCardList");
       container.innerHTML = "";
 
-      if (!rawEmployeeMap || rawEmployeeMap.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500">No Employee Mapping Data.</p>`;
-        return;
+      let empFound = false;
+
+      // Extract Employee Table from Dashboard Tab
+      if (rawDashboardTab.length > 1) {
+        for (let i = 1; i < rawDashboardTab.length; i++) {
+          const row = rawDashboardTab[i];
+          const empName = row[5] || row[0];
+          const empState = row[6] || row[1];
+          const empCases = row[7] || row[2];
+
+          if (empName && empName !== "State" && empName !== "Total") {
+            empFound = true;
+            const div = document.createElement("div");
+            div.className = "bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl flex items-center justify-between hover:border-amber-500/40 transition";
+            div.innerHTML = `
+              <div>
+                <p class="text-xs font-bold text-white">${empName}</p>
+                <p class="text-[10px] text-amber-400 font-semibold">${empState}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs font-black text-emerald-400">${empCases} Cases</p>
+                <p class="text-[10px] text-slate-400">Dashboard Sync</p>
+              </div>
+            `;
+            container.appendChild(div);
+          }
+        }
       }
 
-      rawEmployeeMap.forEach(emp => {
-        const empName = emp.name;
-        
-        let empTotal = 0;
-        let empIssued = 0;
-
-        filteredRows.forEach(r => {
-          if (r.owner && r.owner.toLowerCase() === empName.toLowerCase()) {
-            empTotal++;
-            const rem = (r.remark || "").toLowerCase().trim();
-            if (rem.includes("issued") || rem.includes("approved") || rem.includes("passed") || rem.includes("completed")) {
-              empIssued++;
-            }
-          }
-        });
-
-        const div = document.createElement("div");
-        div.className = "bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl flex items-center justify-between hover:border-amber-500/40 transition";
-        div.innerHTML = `
-          <div>
-            <p class="text-xs font-bold text-white">${empName}</p>
-            <p class="text-[10px] text-amber-400 font-semibold">${emp.assignedStr || 'Assigned State'}</p>
-          </div>
-          <div class="text-right">
-            <p class="text-xs font-black text-emerald-400">${empIssued} Issued</p>
-            <p class="text-[10px] text-slate-400">${empTotal} Filtered Cases</p>
-          </div>
-        `;
-        container.appendChild(div);
-      });
+      if (!empFound) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Dashboard Employee Table synced.</p>`;
+      }
     }
 
     function triggerWinnerConfetti() {
